@@ -1,16 +1,27 @@
-# This is a sample Python script.
+from instruktor import bot
+from instruktor.config import ApiCredentials, get_api_credentials, get_bot_config, BotConfig, Endpoints, \
+    get_endpoints_config
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    try:
+        # Конфигурирция логгера
+        # logging_config = get_logger_config()
+        # configure_logger(logger_config=logging_config)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        bot_credentials: ApiCredentials = get_api_credentials()
+        bot_config: BotConfig = get_bot_config()
+        bot_endpoints: Endpoints = get_endpoints_config()
+        if len(bot_config.token) == 0:
+            raise Exception('Не найден токен')
+        bot.run(bot_config=bot_config)
+
+    except (KeyboardInterrupt, SystemExit):
+        # logger.error("Bot stopped!")
+        pass
+    except Exception as ex:
+        print(ex)
+        # logger.error(ex)
+        # logger.error(traceback.format_exc(limit=None, chain=True))
+        pass
+
+
