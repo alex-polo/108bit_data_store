@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import traceback
 
 from sqlalchemy import delete
 
@@ -53,16 +54,22 @@ async def create_system_user(email: str,
 
 
 async def user_configuration(user_config: NewsBotUserConfig | InstructorBotUserConfig | AdminUserConfig) -> None:
-    if user_config.resetting_user:
-        await delete_user(user_config=user_config)
-        logger.info(f'User: {user_config.username} deleted')
-        await create_system_user(email=user_config.username,
-                                 password=user_config.password,
-                                 is_superuser=user_config.is_superuser,
-                                 is_news_bot=user_config.is_news_bot,
-                                 is_instruktor_bot=user_config.is_instruktor_bot)
-        logger.info(f'User: {user_config.username} created')
-    logger.info(f'Configuration user: {user_config.username} is success')
+    try:
+        if user_config.resetting_user:
+            await delete_user(user_config=user_config)
+            logger.info(f'User: {user_config.username} deleted')
+            await create_system_user(email=user_config.username,
+                                     password=user_config.password,
+                                     is_superuser=user_config.is_superuser,
+                                     is_news_bot=user_config.is_news_bot,
+                                     is_instruktor_bot=user_config.is_instruktor_bot)
+            logger.info(f'User: {user_config.username} created')
+        logger.info(f'Configuration user: {user_config.username} is success')
+    except Exception as error:
+        logger.info(f'{user_config.username}: user configuration error: {error}')
+        logger.error(traceback.format_exc(limit=None, chain=True))
+
+
 
 
 async def on_startup(admin_user_config: AdminUserConfig,
