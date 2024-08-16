@@ -13,6 +13,13 @@ class DatabaseConfig:
 
 
 @dataclass
+class CeleryConfig:
+    LOGGING_CONFIG: str
+    BROKER: str
+    BACKEND: str
+
+
+@dataclass
 class StorageConfig:
     use_cloud: bool
     use_local_directory: bool

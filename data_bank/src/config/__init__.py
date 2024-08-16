@@ -6,7 +6,8 @@ from .classes import (
     InstructorBotUserConfig,
     AuthConfig,
     BrowserChromeConfig,
-    ServerConfig)
+    ServerConfig,
+    CeleryConfig)
 
 from .methods import (
     get_database_config,
@@ -16,4 +17,5 @@ from .methods import (
     get_instructor_bot_user_config,
     get_auth_config,
     get_browser_chrome_config,
-    get_server_config)
+    get_server_config,
+    get_celery_config)

@@ -3,8 +3,8 @@ from .news import wirenboard_parser
 parsers = [
     {
         'system_name': 'wirenboard_parser',
-        'type': 'news_parser',
         'name': 'Wirenboard',
+        'type': 'news_parser',
         'parser': wirenboard_parser,
     }
 ]

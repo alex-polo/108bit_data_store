@@ -1,3 +1,8 @@
+# Celery settings
+config_directory = 'config'
+celery_logging_config = 'config/celery_logging.ini'
+
+# Loader settings
 win_webdriver_path: str = 'drivers\\chrome_127.0.6533.99(r1313161)\\chromedriver-win64\\chromedriver.exe'
 linux_webdriver_path: str = 'drivers/chrome_127.0.6533.99(r1313161)/chromedriver-linux64/chromedriver'
 webdriver_port: int = 8888

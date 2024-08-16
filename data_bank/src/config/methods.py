@@ -14,14 +14,14 @@ from .classes import (
     InstructorBotUserConfig,
     AuthConfig,
     BrowserChromeConfig,
-    ServerConfig)
+    ServerConfig, CeleryConfig)
 
 from .settings import (win_webdriver_path,
                        linux_webdriver_path,
                        webdriver_port,
                        webdriver_timeout,
                        chrome_page_load_strategy,
-                       chrome_options)
+                       chrome_options, celery_logging_config)
 
 logger = logging.getLogger(__name__)
 
@@ -131,4 +131,15 @@ def get_server_config() -> ServerConfig:
     return ServerConfig(
         version=version,
         https=True if env.str('HTTPS') == 'YES' else False
+    )
+
+
+def get_celery_config() -> CeleryConfig:
+    env = Env()
+    env.read_env(os.path.join(os.getcwd(), '.env'))
+
+    return CeleryConfig(
+        LOGGING_CONFIG=os.path.join(os.getcwd(), celery_logging_config),
+        BROKER=env.str('CELERY_BROKER'),
+        BACKEND=env.str('CELERY_BACKEND'),
     )
