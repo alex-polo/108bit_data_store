@@ -1,1 +1,1 @@
-from .configuration_users import on_startup
+from .start import on_startup

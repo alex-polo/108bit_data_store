@@ -5,7 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 from src.auth.routers import auth_router
-from src.events import startup_server
+from src.events import on_startup
 from src.config import (
     AdminUserConfig,
     NewsBotUserConfig,
@@ -33,10 +33,10 @@ async def start_server() -> None:
     storage_config: StorageConfig = get_storage_config()
     browser_chrome_config: BrowserChromeConfig = get_browser_chrome_config()
 
-    await startup_server(admin_user_config=admin_user_config,
-                         news_bot_user_config=news_bot_user_config,
-                         instructor_bot_user_config=instructor_bot_user_config,
-                         storage_config=storage_config)
+    await on_startup(admin_user_config=admin_user_config,
+                     news_bot_user_config=news_bot_user_config,
+                     instructor_bot_user_config=instructor_bot_user_config,
+                     storage_config=storage_config)
 
 
 def shutdown_server() -> None:
