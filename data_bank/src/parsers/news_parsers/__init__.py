@@ -1,1 +1,1 @@
-from wirenboard import wirenboard_parser
+from .wirenboard import wirenboard_parser

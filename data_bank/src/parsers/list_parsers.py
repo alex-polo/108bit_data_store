@@ -8,7 +8,7 @@ list_parsers = [
         'parser_func': wirenboard_parser,
     },
     {
-        'system_name': 'wirenboard_parser2',
+        'system_name': 'wirenboard_parser_1',
         'parser_name': 'Wirenboard2',
         'parser_type': 'news_parser',
         'parser_func': wirenboard_parser,
