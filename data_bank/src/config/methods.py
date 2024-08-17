@@ -14,14 +14,15 @@ from .classes import (
     InstructorBotUserConfig,
     AuthConfig,
     BrowserChromeConfig,
-    ServerConfig, CeleryConfig)
+    ServerConfig,
+    CeleryConfig)
 
 from .settings import (win_webdriver_path,
                        linux_webdriver_path,
                        webdriver_port,
                        webdriver_timeout,
                        chrome_page_load_strategy,
-                       chrome_options, celery_logging_config)
+                       chrome_options, celery_logging_config, scheduler_time)
 
 logger = logging.getLogger(__name__)
 
@@ -142,4 +143,5 @@ def get_celery_config() -> CeleryConfig:
         LOGGING_CONFIG=os.path.join(os.getcwd(), celery_logging_config),
         BROKER=env.str('CELERY_BROKER'),
         BACKEND=env.str('CELERY_BACKEND'),
+        SCHEDULER_TIME=scheduler_time
     )

@@ -44,13 +44,11 @@ async def synchronizing_list_parsers_with_database() -> None:
         dp_parsers: List[Parser] = (await session.execute(select(Parser))).scalars().all()
 
         # Отключаем в базе данных парсеры, которых нет в списке конфига
-        # Парсеры у которых совпадает системное имя не трогаем
-        # Добавляем в базу данных новые парсеры из конфига
         for db_parser in parsers_to_disable(dp_parsers=dp_parsers):
             await session.execute(
                 update(Parser).where(Parser.system_name == db_parser.system_name).values(is_enable=False)
             )
-
+        # Добавляем в базу данных новые парсеры из конфига
         for parser in new_parsers(dp_parsers=dp_parsers):
             await session.execute(
                 insert(Parser).values(system_name=parser.get('system_name'),

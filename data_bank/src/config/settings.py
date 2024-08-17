@@ -1,6 +1,7 @@
 # Celery settings
-config_directory = 'config'
-celery_logging_config = 'config/celery_logging.ini'
+config_directory: str = 'config'
+celery_logging_config: str = 'config/celery_logging.ini'
+scheduler_time: int = 1
 
 # Loader settings
 win_webdriver_path: str = 'drivers\\chrome_127.0.6533.99(r1313161)\\chromedriver-win64\\chromedriver.exe'

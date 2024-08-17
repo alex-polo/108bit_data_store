@@ -16,7 +16,7 @@ async def on_startup(admin_user_config: AdminUserConfig,
                      news_bot_user_config: NewsBotUserConfig,
                      instructor_bot_user_config: InstructorBotUserConfig,
                      storage_config: StorageConfig) -> None:
-    logger.info('Configuration storage')
+    logger.info('Configuration fs_storage')
     storage_configuration(storage_config=storage_config)
 
     logger.info('Synchronizing the list of parsers with the database')

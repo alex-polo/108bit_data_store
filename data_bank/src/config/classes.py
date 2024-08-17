@@ -17,6 +17,7 @@ class CeleryConfig:
     LOGGING_CONFIG: str
     BROKER: str
     BACKEND: str
+    SCHEDULER_TIME: int
 
 
 @dataclass

@@ -15,12 +15,12 @@ celery_config: CeleryConfig = get_celery_config()
 database_config: DatabaseConfig = get_database_config()
 
 # Конфигурация логгера
-# logging.config.fileConfig(celery_config.logging_config)
+# logging.config.fileConfig(celery_config.LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 # Инициализируем celery
 celery = Celery(__name__, broker=celery_config.BROKER, backend=celery_config.BACKEND)
-celery.config_from_object('src.tasks.celeryconfig')
+celery.config_from_object('src.config.celeryconfig')
 
 
 @celery.task
@@ -41,9 +41,9 @@ def setup_periodic_tasks(sender, **kwargs):
     if celery_type == 'BEAT':
         try:
             sender.conf.beat_schedule = {
-                'delete_expiration_verify_code': {
-                    'task': 'task_delete_garbage_verify_code',
-                    'schedule': crontab(minute=f'*/{get_time_for_delete_email_garbage_verify_code()}'),
+                'task_scheduler': {
+                    'task': 'task_scheduler',
+                    'schedule': crontab(minute=f'*/{celery_config.SCHEDULER_TIME}'),
                     'options': {
                         'routing_key': 'periodic_tasks',
                         'priority': 10
