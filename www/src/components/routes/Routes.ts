@@ -1,4 +1,4 @@
-export const Routes = {
+export const ApplicationRouting = {
   AUTH: {
     login: '/login',
     logout: '/logout',
@@ -11,14 +11,8 @@ export const Routes = {
 
     managementOrganizationRoute: 'management-organization/:name',
 
-    appealsRoute: 'appeals/:objectName',
     noObjectsRoute: 'no-objects/:objectName',
     objectSettingsRoute: 'object-settings/:objectName',
-
-    managementOrganizationLink: (organizationName: string) => `management-organization/${organizationName}`,
-    appealsLink: (objectName: string) => `appeals/${objectName}`,
-    noObjectsLink: (objectName: string) => `no-objects/${objectName}`,
-    objectSettingsLink: (objectName: string) => `object-settings/${objectName}`,
   },
   PUBLIC: {
     home: '/',
@@ -26,4 +20,8 @@ export const Routes = {
   ADMIN_PROFILE: {
     admin: 'admin',
   },
+};
+
+export const detailRoute = (route: string, detail: string): string => {
+  return `${route}/${detail}`;
 };
