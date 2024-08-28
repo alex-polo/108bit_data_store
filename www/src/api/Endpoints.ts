@@ -8,7 +8,9 @@ const Endpoints = {
     user_profile: `${BASE_ENDPOINT}/users/me`,
   },
   DASHBOARD: {
-    get_tg_users: `${BASE_ENDPOINT}/frontend/get-tg-users`,
+    get_metrics: `${BASE_ENDPOINT}/frontend/get-metrics`,
+    get_news_parsers: `${BASE_ENDPOINT}/admin-panel/get-news-parsers`,
+    get_catalog_parsers: `${BASE_ENDPOINT}/admin-panel/get-catalog-parsers`,
   },
 };
 

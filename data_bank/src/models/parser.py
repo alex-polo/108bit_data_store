@@ -10,7 +10,7 @@ class Parser(Base):
     __tablename__ = "parsers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    system_name: Mapped[int] = mapped_column(String(255), nullable=False, unique=True)
+    system_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     parser_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=False)
     description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
     parser_type: Mapped[Optional[str]] = mapped_column(String(150), unique=False)

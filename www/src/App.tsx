@@ -7,8 +7,7 @@ import { AuthLayout } from './layouts/AuthLayout';
 import { DashboardLayout } from './layouts/DashboardLayout';
 
 import { HomePage, LoginPage, NotFoundPage } from './components/pages';
-
-import { BreadcrumbPage } from './components/Breadcrumbs';
+import { BreadcrumbPage, MetricsPage, ParsersPage } from './components/AdminPanel';
 
 import './App.css';
 
@@ -16,25 +15,32 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={ApplicationRouting.PUBLIC.home} element={<RootLayout />}>
       <Route index element={<HomePage />} />
-      <Route path="login" element={<LoginPage />} />
+      <Route path={`${ApplicationRouting.AUTH.login}`} element={<LoginPage />} />
       <Route path="*" element={<NotFoundPage />} />
       <Route element={<AuthLayout />}>
         <Route
           path={`${ApplicationRouting.USER_PROFILE.home}/*`}
           element={<DashboardLayout />}
           handle={{
-            crumb: () => <BreadcrumbPage url="" />,
+            crumb: () => <BreadcrumbPage url="" name={null} />,
           }}
         >
-          {/* <Route index element={<DashboardHome />} />
+          <Route index element={<HomePage />} />
           <Route
-            path={AppRoutes.USER_PROFILE.managementOrganizations}
-            element={<ManagementOrganization />}
+            path={ApplicationRouting.USER_PROFILE.metrics}
+            element={<MetricsPage />}
             handle={{
-              crumb: () => <ManagementOrganizationCrumb />,
+              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.metrics} name="Метрики" />,
             }}
           />
           <Route
+            path={ApplicationRouting.USER_PROFILE.parsers}
+            element={<ParsersPage />}
+            handle={{
+              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.parsers} name="Парсеры" />,
+            }}
+          />
+          {/*<Route
             path={AppRoutes.USER_PROFILE.appealsRoute}
             element={<ObjectAppeals />}
             handle={{
@@ -47,22 +53,7 @@ const router = createBrowserRouter(
             handle={{
               crumb: () => <UserSettingsCrumb />,
             }}
-          />
-
-          <Route
-            path={AppRoutes.USER_PROFILE.createObject}
-            element={<CreateObject />}
-            handle={{
-              crumb: () => <UserAddObjectCrumb />,
-            }}
-          />
-          <Route
-            path={AppRoutes.USER_PROFILE.createOrganization}
-            element={<CreateOrganizationForm />}
-            handle={{
-              crumb: () => <UserAddOrganizationCrumb />,
-            }}
-          />*/}
+          /> */}
         </Route>
       </Route>
     </Route>

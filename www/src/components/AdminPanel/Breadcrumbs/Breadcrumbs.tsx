@@ -39,14 +39,13 @@ export const Breadcrumbs = () => {
 
 type Props = {
   url: string;
+  name: string | null;
 };
 
 export const BreadcrumbPage = (props: Props) => {
   return (
     <>
-      <Link to={props.url}>
-        <MdOutlineCottage />
-      </Link>
+      <Link to={props.url}>{props.name ? props.name : <MdOutlineCottage />}</Link>
     </>
   );
 };

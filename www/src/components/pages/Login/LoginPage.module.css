@@ -1,0 +1,33 @@
+.login_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  /* align-items: center !important;
+  justify-content: center !important;
+  display: flex !important; */
+}
+
+.login_form_container {
+  width: 45em;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: var(--bs-box-shadow) !important;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.login_title {
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 1.5em;
+}
+
+.login_form {
+  margin-bottom: 15px;
+}
+
+.login_button {
+  width: 100%;
+}

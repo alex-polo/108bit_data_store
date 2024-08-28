@@ -1,0 +1,10 @@
+.toggler_button {
+  color: var(--bs-navbar-color);
+  background-color: transparent;
+  border: 0px;
+}
+
+.navbar {
+  background-color: #fff;
+  box-shadow: var(--bs-box-shadow) !important;
+}

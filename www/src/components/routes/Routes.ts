@@ -4,9 +4,9 @@ export const ApplicationRouting = {
     logout: '/logout',
   },
   USER_PROFILE: {
-    home: '/profile',
-    createObject: 'create-object',
-    createOrganization: 'create-organization',
+    home: '/admin-panel',
+    parsers: 'parsers',
+    metrics: 'metrics',
     managementOrganizations: 'management-organizations',
 
     managementOrganizationRoute: 'management-organization/:name',

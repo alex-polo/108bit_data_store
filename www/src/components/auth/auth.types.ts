@@ -4,8 +4,8 @@ export type UserProfile = {
 };
 
 export interface IUserLoginData {
-  title?: string;
-  children: React.ReactNode;
+  login: string;
+  password: string;
 }
 
 export interface IUserProfile {
