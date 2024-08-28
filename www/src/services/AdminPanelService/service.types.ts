@@ -1,5 +1,8 @@
 export interface IParserData {
   id: number;
-  login: string;
-  password: string;
+  system_name: string;
+  parser_name: string;
+  description: string;
+  parser_type: string;
+  is_enable: true;
 }

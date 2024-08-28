@@ -1,2 +1,2 @@
 export type { IParserData } from './service.types';
-export { useGetNewsParsers } from './hooks';
+export { useGetNewsParsers, useGetCatalogParsers } from './hooks';

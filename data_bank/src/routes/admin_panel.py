@@ -29,7 +29,8 @@ async def get_news_parsers(session: AsyncSession = Depends(get_async_session),
 
     # return await session.execute(select(Parser))
     return [ParsersResponse.model_validate(row, from_attributes=True)
-            for row in (await session.execute(select(Parser))).scalars().all()]
+            for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser')))
+            .scalars().all()]
 
 
 @admin_panel_router.get("/get-catalog-parsers",
@@ -40,7 +41,9 @@ async def get_catalog_parsers(session: AsyncSession = Depends(get_async_session)
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    return await session.execute(select(Parser))
+    return [ParsersResponse.model_validate(row, from_attributes=True)
+            for row in (await session.execute(select(Parser).where(Parser.parser_type == 'catalog_parser')))
+            .scalars().all()]
 
 # @admin_panel_router.post("/create-organization",
 #                       responses={

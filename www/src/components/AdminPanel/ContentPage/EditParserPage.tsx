@@ -2,7 +2,11 @@ import { Container, Row, Spinner } from 'react-bootstrap';
 import { useGetNewsParsers, useGetCatalogParsers } from '../../../services/AdminPanelService';
 import { ParserTable } from './Tables/Table';
 
-export const ParsersPage = () => {
+type Props = {
+  system_name: string;
+};
+
+export const EditParsersPage = (props: Props) => {
   const queryNewsParser = useGetNewsParsers();
   const queryCatalogParser = useGetCatalogParsers();
 
@@ -22,9 +26,9 @@ export const ParsersPage = () => {
 
   return (
     <>
-      <Container fluid>
+      <Container>
         <Row xs={6} md={6}>
-          <h1>Парсеры</h1>
+          <h1>Редактирование парсера</h1>
         </Row>
         <Row>
           <h2>Новостные парсеры</h2>
