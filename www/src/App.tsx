@@ -7,7 +7,7 @@ import { AuthLayout } from './layouts/AuthLayout';
 import { DashboardLayout } from './layouts/DashboardLayout';
 
 import { HomePage, LoginPage, NotFoundPage } from './components/pages';
-import { BreadcrumbPage, MetricsPage, ParsersPage } from './components/AdminPanel';
+import { BreadcrumbPage, MetricsPage, ParsersPage, EditParserPage } from './components/AdminPanel';
 
 import './App.css';
 
@@ -40,6 +40,16 @@ const router = createBrowserRouter(
               crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.parsers} name="Парсеры" />,
             }}
           />
+          <Route
+            path={ApplicationRouting.USER_PROFILE.editParser}
+            element={<EditParserPage />}
+            handle={{
+              crumb: () => (
+                <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.editParser} name="Редактирование парсера" />
+              ),
+            }}
+          />
+
           {/*<Route
             path={AppRoutes.USER_PROFILE.appealsRoute}
             element={<ObjectAppeals />}

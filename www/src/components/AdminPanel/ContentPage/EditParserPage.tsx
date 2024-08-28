@@ -3,10 +3,10 @@ import { useGetNewsParsers, useGetCatalogParsers } from '../../../services/Admin
 import { ParserTable } from './Tables/Table';
 
 type Props = {
-  system_name: string;
+  //   system_name: string;
 };
 
-export const EditParsersPage = (props: Props) => {
+export const EditParserPage = (props: Props) => {
   const queryNewsParser = useGetNewsParsers();
   const queryCatalogParser = useGetCatalogParsers();
 

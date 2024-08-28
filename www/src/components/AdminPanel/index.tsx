@@ -1,4 +1,4 @@
 export { Breadcrumbs, BreadcrumbPage } from './Breadcrumbs';
 export { NavBar } from './NavBar';
 export { Sidebar } from './Sidebar';
-export { MetricsPage, ParsersPage, HomePage } from './ContentPage';
+export { MetricsPage, ParsersPage, HomePage, EditParserPage } from './ContentPage';

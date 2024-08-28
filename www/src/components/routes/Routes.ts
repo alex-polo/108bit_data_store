@@ -7,7 +7,7 @@ export const ApplicationRouting = {
     home: '/admin-panel',
     parsers: 'parsers',
     metrics: 'metrics',
-    managementOrganizations: 'management-organizations',
+    editParser: 'edit-parser',
 
     managementOrganizationRoute: 'management-organization/:name',
 

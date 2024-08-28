@@ -16,7 +16,7 @@ import {
 // import { queryUsers, User } from './TableUsers'
 import { TableRow } from './TableRow';
 import { IParserData } from '../../../../services/AdminPanelService';
-import { Button } from 'react-bootstrap';
+import { Button, NavLink } from 'react-bootstrap';
 
 declare module '@tanstack/react-table' {
   //allows us to define custom properties for our columns
@@ -45,6 +45,7 @@ export const ParserTable = (props: Props) => {
   const editRow = () => {
     if (table.getSelectedRowModel().rows.length > 0) {
       const system_name = table.getSelectedRowModel().rows[0].original.system_name;
+      <NavLink to={AppRoutes.USER_PROFILE.objectSettingsLink(objectusObject.name)}>Настройки</NavLink>;
       console.log(system_name);
     }
   };
