@@ -1,1 +1,1 @@
-from .admin_panel import ParsersResponse
+from .admin_panel import ParsersResponse, GetParserQuery, ChangeParserQuery

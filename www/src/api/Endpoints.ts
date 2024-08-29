@@ -11,6 +11,8 @@ const Endpoints = {
     get_metrics: `${BASE_ENDPOINT}/frontend/get-metrics`,
     get_news_parsers: `${BASE_ENDPOINT}/admin-panel/get-news-parsers`,
     get_catalog_parsers: `${BASE_ENDPOINT}/admin-panel/get-catalog-parsers`,
+    get_parser: `${BASE_ENDPOINT}/admin-panel/get-parser`,
+    save_parser: `${BASE_ENDPOINT}/admin-panel/save-change-parser`,
   },
 };
 

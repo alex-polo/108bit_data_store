@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: Props) => {
       localStorage.setItem('userProfile', JSON.stringify(profile));
       setUserProfile(profile);
       apiClient.defaults.headers['Authorization'] = `Bearer ${profile.access_token}`;
-      navigate(ApplicationRouting.USER_PROFILE.home);
+      navigate(ApplicationRouting.USER_PROFILE_ROUTE.home);
     } catch (error) {
       console.log(error);
       throw new Error('Failed to login');

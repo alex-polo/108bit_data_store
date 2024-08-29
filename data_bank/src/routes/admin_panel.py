@@ -3,13 +3,13 @@ from typing import List
 
 import fastapi
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import User, Parser
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse
+from src.schemes import ParsersResponse, GetParserQuery, ChangeParserQuery
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +27,23 @@ async def get_news_parsers(session: AsyncSession = Depends(get_async_session),
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    # return await session.execute(select(Parser))
-    return [ParsersResponse.model_validate(row, from_attributes=True)
-            for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser')))
-            .scalars().all()]
+    # return [ParsersResponse.model_validate(row, from_attributes=True)
+    #         for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser')))
+    #         .scalars().all()]
+
+    list_parsers: List[ParsersResponse] = list()
+    for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser'))).scalars().all():
+        list_parsers.append(ParsersResponse(
+            id=row.id,
+            system_name=row.system_name,
+            parser_name=row.parser_name,
+            description=row.description,
+            parser_type=row.parser_type,
+            is_enable='Да' if row.is_enable else 'Нет',
+            is_parser_scheme_missing='Отсутствует' if row.is_parser_scheme_missing else 'Активна',
+        ))
+
+    return list_parsers
 
 
 @admin_panel_router.get("/get-catalog-parsers",
@@ -41,30 +54,62 @@ async def get_catalog_parsers(session: AsyncSession = Depends(get_async_session)
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    return [ParsersResponse.model_validate(row, from_attributes=True)
-            for row in (await session.execute(select(Parser).where(Parser.parser_type == 'catalog_parser')))
-            .scalars().all()]
+    # list_parsers: list = [ParsersResponse.model_validate(row, from_attributes=True)
+    #                       for row in
+    #                       (await session.execute(select(Parser).where(Parser.parser_type == 'catalog_parser')))
+    #                       .scalars().all()]
 
-# @admin_panel_router.post("/create-organization",
-#                       responses={
-#                           # 201: {'description': 'Creation organization is success'},
-#                           409: {"description": "Organization already exists", },
-#                           403: {"description": "User is not superuser", },
-#                           500: {"description": "Internal error server", }
-#                       },
-#                       status_code=fastapi.status.HTTP_201_CREATED)
-# async def create_organization(value: CreateOrganizationQuery,
-#                               session: AsyncSession = Depends(get_async_session),
-#                               user: User = Depends(current_active_user)):
-#     if user.is_superuser is False:
-#         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN, detail="User is not superuser")
-#     try:
-#         await session.execute(insert(Organization).values(name=value.name,
-#                                                           short_name=value.short_name,
-#                                                           address=value.address,
-#                                                           inn=value.inn,
-#                                                           supervisor=value.supervisor,
-#                                                           description=value.description))
+    list_parsers: List[ParsersResponse] = list()
+    for row in (await session.execute(select(Parser).where(Parser.parser_type == 'catalog_parser'))).scalars().all():
+        list_parsers.append(ParsersResponse(
+            id=row.id,
+            system_name=row.system_name,
+            parser_name=row.parser_name,
+            description=row.description,
+            parser_type=row.parser_type,
+            is_enable='Да' if row.is_enable else 'Нет',
+            is_parser_scheme_missing='Отсутствует' if row.is_parser_scheme_missing else 'Активна',
+        ))
+
+    return list_parsers
+
+
+@admin_panel_router.get("/get-parser",
+                        status_code=fastapi.status.HTTP_200_OK,
+                        response_model=ParsersResponse)
+async def get_parser(parser_system_name: str,
+                     session: AsyncSession = Depends(get_async_session),
+                     user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
+
+    parser = (await session.execute(select(Parser).where(Parser.system_name == parser_system_name))).scalar()
+    return ParsersResponse(
+        id=parser.id,
+        system_name=parser.system_name,
+        parser_name=parser.parser_name,
+        description=parser.description,
+        parser_type=parser.parser_type,
+        is_enable='Да' if parser.is_enable else 'Нет',
+        is_parser_scheme_missing='Отсутствует' if parser.is_parser_scheme_missing else 'Активна',
+    )
+
+
+@admin_panel_router.post("/save-change-parser",
+                         status_code=fastapi.status.HTTP_202_ACCEPTED)
+async def save_change_parser(value: ChangeParserQuery,
+                             session: AsyncSession = Depends(get_async_session),
+                             user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN, detail="User is not superuser")
+
+    print((await session.execute(select(Parser).where(Parser.system_name == value.system_name))).scalar())
+    await session.execute(update(Parser).where(Parser.system_name == value.system_name)
+                          .values(parser_name=value.parser_name,
+                                  description=value.description,
+                                  is_enable=True if value.is_enable == 'Да' else False))
+    await session.commit()
+
 #
 #         await session.commit()
 #     except IntegrityError as error:

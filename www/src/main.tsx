@@ -7,19 +7,21 @@ import App from './App.tsx';
 import './index.css';
 
 export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
+      gcTime: 1000,
+    },
+  },
+  // },
   // defaultOptions: {
   //   queries: {
   //     refetchOnWindowFocus: true,
+  //     refetchOnReconnect: false,
+  //     retry: 2,
+  //     staleTime: 0,
   //   },
   // },
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
-      staleTime: 5 * 60 * 1000,
-    },
-  },
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -1,4 +1,6 @@
-import React, { HTMLProps, useMemo } from 'react';
+import React, { HTMLProps, useEffect, useMemo, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import {
   Column,
@@ -13,15 +15,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-// import { queryUsers, User } from './TableUsers'
 import { TableRow } from './TableRow';
 import { IParserData } from '../../../../services/AdminPanelService';
-import { Button, NavLink } from 'react-bootstrap';
+import { ApplicationRouting } from '../../../routes/Routes';
 
 declare module '@tanstack/react-table' {
   //allows us to define custom properties for our columns
   interface ColumnMeta<TData extends RowData, TValue> {
-    filterVariant?: 'text' | 'select';
+    filterVariant?: 'text' | 'select_is_enabled' | 'select_parser_scheme_missing';
   }
 }
 
@@ -32,22 +33,13 @@ type Props = {
 export const ParserTable = (props: Props) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-
-  //   const { data: serverData } = queryUsers();
-
-  //   const [data, setData] = React.useState<Person[]>([])
+  const [parserSystemName, setParserSystemName] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const data = useMemo(() => props.serverData ?? [], [props.serverData]);
 
-  //   const refreshData = () => setData(_old => makeData(50_000))
-  // const refreshData = () => setData(_old => serverData)
-
-  const editRow = () => {
-    if (table.getSelectedRowModel().rows.length > 0) {
-      const system_name = table.getSelectedRowModel().rows[0].original.system_name;
-      <NavLink to={AppRoutes.USER_PROFILE.objectSettingsLink(objectusObject.name)}>Настройки</NavLink>;
-      console.log(system_name);
-    }
+  const editRowParser = () => {
+    if (parserSystemName) navigate(ApplicationRouting.USER_PROFILE_LINK.editParser(parserSystemName));
   };
 
   const columnsUser = React.useMemo<ColumnDef<IParserData>[]>(
@@ -88,53 +80,33 @@ export const ParserTable = (props: Props) => {
       {
         accessorKey: 'is_enable',
         accessor: 'is_enable',
-        // accessor: d => { return d.is_active ? 'Available' : 'Not available' },
         id: 'is_enable',
         header: 'Активен',
-        // meta: {
-        //   filterVariant: 'select',
-        // },
-
-        cell: (info) => (info.getValue() ? 'Да' : 'Нет'),
-        // cell: (info) => info.getValue(),
+        meta: {
+          filterVariant: 'select_is_enabled',
+        },
+        cell: (info) => info.getValue(),
       },
-      //   {
-      //     accessorKey: 'is_superuser',
-      //     id: 'is_superuser',
-      //     header: 'Администратор',
-      //     // Filter: () => (
-      //     //   <select className='form-control' value={state.availability_value} onChange={(e) => applyFilter(e.target.value)} >
-      //     //     <option value={`{ "available": "" }`}>Select</option>
-      //     //     <option value={`{ "available": "" }`}>All</option>
-      //     //     <option value={`{ "available": "1" }`}>Available</option>
-      //     //     <option value={`{ "available": "0" }`}>Not available</option>
-      //     //   </select>)
-      //     meta: {
-      //       filterVariant: 'select',
-      //     },
-      //     // cell: info => info.getValue() ? 'Да' : 'Нет',
-      //   },
-      //   {
-      //     accessorKey: 'is_tg_bot',
-      //     id: 'is_tg_bot',
-      //     header: 'Пользователь для бота',
-      //     meta: {
-      //       filterVariant: 'select',
-      //     },
-      //     cell: (info) => (info.getValue() ? 'Да' : 'Нет'),
-      //   },
-      //   {
-      //     accessorKey: 'is_verified',
-      //     id: 'is_verified',
-      //     header: 'Пользователь проверен',
-      //     meta: {
-      //       filterVariant: 'select',
-      //     },
-      //     cell: (info) => (info.getValue() ? 'Да' : 'Нет'),
-      //   },
+      {
+        accessorKey: 'is_parser_scheme_missing',
+        id: 'is_parser_scheme_missing',
+        header: 'Схема в системе',
+        meta: {
+          filterVariant: 'select_parser_scheme_missing',
+        },
+        cell: (info) => info.getValue(),
+      },
     ],
     []
   );
+
+  useEffect(() => {
+    if (table.getSelectedRowModel().rows.length > 0) {
+      setParserSystemName(table.getSelectedRowModel().rows[0].original.system_name);
+    } else {
+      setParserSystemName(null);
+    }
+  });
 
   const table = useReactTable({
     data,
@@ -147,7 +119,7 @@ export const ParserTable = (props: Props) => {
     enableMultiRowSelection: false,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(), //client side filtering
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -155,7 +127,16 @@ export const ParserTable = (props: Props) => {
 
   return (
     <div className="p-2">
-      <Button onClick={editRow}>edit</Button>
+      <Button className="btn btn-danger" disabled={parserSystemName ? false : true} onClick={editRowParser}>
+        Редактировать
+      </Button>
+      {/* <NavLink
+        className="btn btn-primary btn-sm"
+        to={ApplicationRouting.USER_PROFILE_LINK.editParser(parserSystemName ? parserSystemName : '')}
+      >
+        + Новый объект
+      </NavLink> */}
+
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -197,7 +178,6 @@ export const ParserTable = (props: Props) => {
                 {row.getVisibleCells().map((cell) => {
                   return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
                 })}
-                {/* </> */}
               </TableRow>
             );
           })}
@@ -230,14 +210,14 @@ export const ParserTable = (props: Props) => {
         >
           {'>>'}
         </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
+        <span className=" items-center gap-1">
+          <div>Страница</div>
           <strong>
             {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </strong>
         </span>
         <span className="flex items-center gap-1">
-          | Go to page:
+          | Перейти на страницу:
           <input
             type="number"
             defaultValue={table.getState().pagination.pageIndex + 1}
@@ -256,35 +236,12 @@ export const ParserTable = (props: Props) => {
         >
           {[10, 20, 30, 40, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
-              Show {pageSize}
+              Показать {pageSize}
             </option>
           ))}
         </select>
       </div>
-      <div>Количество строк: {table.getPrePaginationRowModel().rows.length}</div>
-      <pre>{JSON.stringify({ columnFilters: table.getState().columnFilters }, null, 2)}</pre>
-      <div>
-        {Object.keys(rowSelection).length} of {table.getPreFilteredRowModel().rows.length} Total Rows Selected
-      </div>
       <hr />
-      <br />
-      <div>
-        <button
-          className="border rounded p-2 mb-2"
-          onClick={() => console.info('table.getSelectedRowModel().flatRows', table.getSelectedRowModel().flatRows)}
-        >
-          Log table.getSelectedRowModel().flatRows
-        </button>
-      </div>
-      <div>
-        <label>Row Selection State:</label>
-        <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
-      </div>
-
-      <hr />
-      <br />
-      <hr />
-      <br />
     </div>
   );
 };
@@ -293,28 +250,39 @@ function Filter({ column }: { column: Column<any, unknown> }) {
   let columnFilterValue = column.getFilterValue();
   const { filterVariant } = column.columnDef.meta ?? {};
 
-  // console.log(columnFilterValue?.toString())
-  return filterVariant === 'select' ? (
+  if (filterVariant === 'select_parser_scheme_missing') {
+    return (
+      <select
+        onChange={(e) => {
+          column.setFilterValue(e.target.value);
+        }}
+        value={columnFilterValue?.toString()}
+      >
+        {/* See faceted column filters example for dynamic select options */}
+        <option value="">Показать все</option>
+        <option value="Активна" label="Активна" />
+        <option value="Отсутствует" label="Отсутствует" />
+      </select>
+    );
+  }
+
+  return filterVariant === 'select_is_enabled' ? (
     <select
       onChange={(e) => {
-        // console.log(e.target.value)
-        // console.log(typeof e.target.value)
-        console.log(columnFilterValue?.toString());
-        console.log('--------------------');
         column.setFilterValue(e.target.value);
       }}
       value={columnFilterValue?.toString()}
     >
       {/* See faceted column filters example for dynamic select options */}
-      <option value="">Все</option>
-      <option value="true" label="Да" />
-      <option value="false" label="Нет" />
+      <option value="">Показать все</option>
+      <option value="Да" label="Да" />
+      <option value="Нет" label="Нет" />
     </select>
   ) : (
     <DebouncedInput
       className="w-36 border shadow rounded"
       onChange={(value) => column.setFilterValue(value)}
-      placeholder={`Search...`}
+      placeholder={'Поиск'}
       type="text"
       value={(columnFilterValue ?? '') as string}
     />

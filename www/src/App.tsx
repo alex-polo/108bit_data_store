@@ -19,7 +19,7 @@ const router = createBrowserRouter(
       <Route path="*" element={<NotFoundPage />} />
       <Route element={<AuthLayout />}>
         <Route
-          path={`${ApplicationRouting.USER_PROFILE.home}/*`}
+          path={`${ApplicationRouting.USER_PROFILE_ROUTE.home}/*`}
           element={<DashboardLayout />}
           handle={{
             crumb: () => <BreadcrumbPage url="" name={null} />,
@@ -27,25 +27,29 @@ const router = createBrowserRouter(
         >
           <Route index element={<HomePage />} />
           <Route
-            path={ApplicationRouting.USER_PROFILE.metrics}
+            path={ApplicationRouting.USER_PROFILE_ROUTE.metrics}
             element={<MetricsPage />}
             handle={{
-              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.metrics} name="Метрики" />,
+              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.metrics} name="Метрики" />,
             }}
           />
           <Route
-            path={ApplicationRouting.USER_PROFILE.parsers}
+            path={ApplicationRouting.USER_PROFILE_ROUTE.parsers + '/'}
             element={<ParsersPage />}
             handle={{
-              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.parsers} name="Парсеры" />,
+              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.parsers} name="Парсеры" />,
             }}
           />
           <Route
-            path={ApplicationRouting.USER_PROFILE.editParser}
+            path={`${ApplicationRouting.USER_PROFILE_ROUTE.editParser}`}
+            // path={'parsers/edit-parser/:parserSystemName'}
             element={<EditParserPage />}
             handle={{
               crumb: () => (
-                <BreadcrumbPage url={ApplicationRouting.USER_PROFILE.editParser} name="Редактирование парсера" />
+                <BreadcrumbPage
+                  url={`${ApplicationRouting.USER_PROFILE_ROUTE.editParser}`}
+                  name="Редактирование парсера"
+                />
               ),
             }}
           />
