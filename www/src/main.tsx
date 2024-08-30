@@ -10,7 +10,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: true,
-      gcTime: 1000,
+      // gcTime: 1000,
     },
   },
   // },

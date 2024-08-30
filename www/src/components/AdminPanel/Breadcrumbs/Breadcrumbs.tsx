@@ -40,12 +40,17 @@ export const Breadcrumbs = () => {
 type Props = {
   url: string;
   name: string | null;
+  emptyUrl: boolean;
 };
 
 export const BreadcrumbPage = (props: Props) => {
   return (
     <>
-      <Link to={props.url}>{props.name ? props.name : <MdOutlineCottage />}</Link>
+      {props.emptyUrl ? (
+        <span>{props.name}</span>
+      ) : (
+        <Link to={props.url}>{props.name ? props.name : <MdOutlineCottage />}</Link>
+      )}
     </>
   );
 };

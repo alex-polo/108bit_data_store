@@ -1,6 +1,6 @@
 import React, { HTMLProps, useEffect, useMemo, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Column,

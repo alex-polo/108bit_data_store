@@ -22,7 +22,7 @@ const router = createBrowserRouter(
           path={`${ApplicationRouting.USER_PROFILE_ROUTE.home}/*`}
           element={<DashboardLayout />}
           handle={{
-            crumb: () => <BreadcrumbPage url="" name={null} />,
+            crumb: () => <BreadcrumbPage url="" name={null} emptyUrl={false} />,
           }}
         >
           <Route index element={<HomePage />} />
@@ -30,14 +30,18 @@ const router = createBrowserRouter(
             path={ApplicationRouting.USER_PROFILE_ROUTE.metrics}
             element={<MetricsPage />}
             handle={{
-              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.metrics} name="Метрики" />,
+              crumb: () => (
+                <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.metrics} name="Метрики" emptyUrl={false} />
+              ),
             }}
           />
           <Route
             path={ApplicationRouting.USER_PROFILE_ROUTE.parsers + '/'}
             element={<ParsersPage />}
             handle={{
-              crumb: () => <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.parsers} name="Парсеры" />,
+              crumb: () => (
+                <BreadcrumbPage url={ApplicationRouting.USER_PROFILE_ROUTE.parsers} name="Парсеры" emptyUrl={false} />
+              ),
             }}
           />
           <Route
@@ -49,6 +53,7 @@ const router = createBrowserRouter(
                 <BreadcrumbPage
                   url={`${ApplicationRouting.USER_PROFILE_ROUTE.editParser}`}
                   name="Редактирование парсера"
+                  emptyUrl={true}
                 />
               ),
             }}

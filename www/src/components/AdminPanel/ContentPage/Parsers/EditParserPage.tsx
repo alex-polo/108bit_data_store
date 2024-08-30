@@ -3,9 +3,8 @@ import { Button, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { saveChangedParserAPI, useGetParser } from '../../../../services/AdminPanelService';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { IParserChangeData } from '../../../../services/AdminPanelService/service.types';
-import { getParsersAPI } from '../../../../services/AdminPanelService/api';
 
 type TypeError = {
   parserName: string | null;
@@ -14,45 +13,50 @@ type TypeError = {
 
 export const EditParserPage = () => {
   const { parserSystemName } = useParams();
-  // const queryParser = useGetParser(parserSystemName);
+  const queryParser = useGetParser(parserSystemName);
 
-  const queryParser = useQuery({
-    queryKey: ['getParser', parserSystemName],
-    queryFn: () => getParsersAPI(parserSystemName ? parserSystemName : ''),
-    select: ({ data }) => data,
-  });
+  // const queryParser = useQuery({
+  //   queryKey: ['getParser', parserSystemName],
+  //   queryFn: () => getParsersAPI(parserSystemName ? parserSystemName : ''),
+  //   select: ({ data }) => data,
+  // });
 
   const navigate = useNavigate();
   const saveChangedMutation = useMutation({ mutationFn: saveChangedParserAPI });
 
   const systemName = queryParser.data?.system_name;
-  const disabledForm = queryParser.data?.is_parser_scheme_missing == 'Активна' ? false : true;
+  // const parserName = queryParser.data?.parser_name;
+  // const description = queryParser.data?.description;
+  // const isEnable = queryParser.data?.is_enable;
+  // const disabledForm = queryParser.data?.is_parser_scheme_missing == 'Активна' ? false : true;
 
-  const [parserName, setParserName] = useState<string>(
-    queryParser.data?.parser_name ? queryParser.data?.parser_name : ''
-  );
-  const [description, setDescription] = useState<string>(
-    queryParser.data?.description ? queryParser.data?.description : ''
-  );
-  const [isEnable, setIsEnable] = useState<string>(queryParser.data?.is_enable ? queryParser.data?.is_enable : '');
-  // const [parserName, setParserName] = useState<string>('');
-  // const [description, setDescription] = useState<string>('');
-  // const [isEnable, setIsEnable] = useState<string>('');
-  // const [disabledForm, setDisabledForm] = useState<boolean>(
-  //   queryParser.data?.is_parser_scheme_missing == 'Активна' ? true : false
+  // const [parserName, setParserName] = useState<string>(
+  //   queryParser.data?.parser_name ? queryParser.data?.parser_name : ''
   // );
+  // const [description, setDescription] = useState<string>(
+  //   queryParser.data?.description ? queryParser.data?.description : ''
+  // );
+  // const [isEnable, setIsEnable] = useState<string>(queryParser.data?.is_enable ? queryParser.data?.is_enable : '');
+
+  const [parserName, setParserName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [isEnable, setIsEnable] = useState<string>('');
+  const [disabledForm, setDisabledForm] = useState<boolean>(
+    queryParser.data?.is_parser_scheme_missing == 'Активна' ? true : false
+  );
   const [errors, setErrors] = useState<TypeError>({ parserName: null, description: null });
 
   useEffect(() => {
-    console.log(queryParser.data);
-    // if (queryParser.data?.parser_name != undefined) setParserName(queryParser.data?.parser_name);
+    if (queryParser.isSuccess) console.log(queryParser.data);
 
-    // if (queryParser.data?.description != undefined) setDescription(queryParser.data?.description);
+    if (queryParser.data?.parser_name != undefined) setParserName(queryParser.data?.parser_name);
 
-    // if (queryParser.data?.is_enable != undefined) setIsEnable(queryParser.data?.is_enable);
+    if (queryParser.data?.description != undefined) setDescription(queryParser.data?.description);
 
-    // if (queryParser.data?.is_parser_scheme_missing == 'Активна') setDisabledForm(false);
-  }, []);
+    if (queryParser.data?.is_enable != undefined) setIsEnable(queryParser.data?.is_enable);
+
+    if (queryParser.data?.is_parser_scheme_missing == 'Активна') setDisabledForm(false);
+  }, [queryParser.isSuccess]);
 
   const backButtonHandler = () => {
     navigate(-1);
@@ -156,12 +160,24 @@ export const EditParserPage = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Парсер включен:</Form.Label>
                   <Form.Select
-                    defaultValue={isEnable}
+                    // defaultValue={isEnable}
                     disabled={disabledForm}
                     onChange={(e) => setIsEnable(e.target.value)}
                   >
-                    <option value="Да">Да</option>
-                    <option value="Нет">Нет</option>
+                    {isEnable === 'Да' ? (
+                      <option selected value="Да">
+                        Да
+                      </option>
+                    ) : (
+                      <option value="Нет">Нет</option>
+                    )}
+                    {isEnable === 'Нет' ? (
+                      <option value="Да">Да</option>
+                    ) : (
+                      <option selected value="Нет">
+                        Нет
+                      </option>
+                    )}
                   </Form.Select>
                 </Form.Group>
 
