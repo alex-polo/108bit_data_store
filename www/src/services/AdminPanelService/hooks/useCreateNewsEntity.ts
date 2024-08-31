@@ -7,12 +7,6 @@ export const useCreateNewsEntity = () => {
     mutationKey: ['useCreateNewsEntity'],
     mutationFn: async (data: Omit<INewsEntityData, 'id'>) => createNewsEntityAPI(data),
   });
-  //   const query = useQuery({
-  //     queryKey: ['saveParser', parserSystemName],
-  //     queryFn: () => getParsersAPI(parserSystemName ? parserSystemName : ''),
-  //     select: ({ data }) => data,
-  //     enabled: !!parserSystemName,
-  //   });
 
   return mutation;
 };

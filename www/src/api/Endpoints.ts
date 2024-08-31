@@ -15,6 +15,7 @@ const Endpoints = {
     save_parser: `${BASE_ENDPOINT}/admin-panel/save-change-parser`,
     get_all_news_entity: `${BASE_ENDPOINT}/admin-panel/get-all-news-gathering`,
     create_news_entity: `${BASE_ENDPOINT}/admin-panel/create-news-gathering`,
+    delete_news_gathering: `${BASE_ENDPOINT}/admin-panel/delete-news-gathering-by-id`,
     get_active_news_parsers: `${BASE_ENDPOINT}/admin-panel/get-active-news-parsers`,
   },
 };

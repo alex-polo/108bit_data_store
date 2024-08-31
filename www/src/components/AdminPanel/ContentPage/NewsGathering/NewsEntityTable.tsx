@@ -1,5 +1,5 @@
 import React, { HTMLProps, useEffect, useMemo, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -18,6 +18,7 @@ import {
 import { TableRow } from '../../../utils/TableRow';
 import { IParserData } from '../../../../services/AdminPanelService';
 import { ApplicationRouting } from '../../../routes/Routes';
+import { useAllNewsEntity, useDeleteNewsEntity } from '../../../../services/AdminPanelService/hooks';
 
 declare module '@tanstack/react-table' {
   //allows us to define custom properties for our columns
@@ -26,17 +27,22 @@ declare module '@tanstack/react-table' {
   }
 }
 
-type Props = {
-  serverData: IParserData[] | undefined;
-};
+// type Props = {
+//   serverData: IParserData[] | undefined;
+// };
 
-export const NewsEntityTable = (props: Props) => {
+export const NewsEntityTable = () => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [newsEntityName, setNewsEntityName] = useState<string | null>(null);
   const navigate = useNavigate();
+  const deleteEntityMutation = useDeleteNewsEntity();
+  const queryNewsEntity = useAllNewsEntity();
+  // const queryClient = useQueryClient();
+  const [disableButton, setDisableButton] = useState<boolean>(true);
 
-  const data = useMemo(() => props.serverData ?? [], [props.serverData]);
+  // serverData={queryNewsEntity.newsEntity}
+  const data = useMemo(() => queryNewsEntity.newsEntity ?? [], [queryNewsEntity.newsEntity]);
 
   const editButtonHandler = () => {
     if (newsEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editParser(newsEntityName));
@@ -47,7 +53,10 @@ export const NewsEntityTable = (props: Props) => {
   };
 
   const deleteButtonHandler = () => {
-    navigate(-1);
+    // queryNewsEntity.dataUpdatedAt;
+    deleteEntityMutation.mutate(table.getSelectedRowModel().rows[0].original.id);
+    // queryClient.invalidateQueries({ queryKey: ['AllNewsEntity'] });
+    // queryClient.refetchQueries({ queryKey: ['AllNewsEntity'] });
   };
 
   const columnsUser = React.useMemo<ColumnDef<IParserData>[]>(
@@ -114,9 +123,12 @@ export const NewsEntityTable = (props: Props) => {
   useEffect(() => {
     if (table.getSelectedRowModel().rows.length > 0) {
       setNewsEntityName(table.getSelectedRowModel().rows[0].original.system_name);
+      setDisableButton(false);
     } else {
+      setDisableButton(true);
       setNewsEntityName(null);
     }
+    queryNewsEntity.refetch();
   });
 
   const table = useReactTable({
@@ -136,15 +148,19 @@ export const NewsEntityTable = (props: Props) => {
     onRowSelectionChange: setRowSelection,
   });
 
+  if (queryNewsEntity.isLoading) <Spinner animation="grow" variant="primary" />;
+
+  if (queryNewsEntity.isError) <p>Ошибка получения данных</p>;
+
   return (
     <div className="p-2">
       <Button className="btn btn-success" onClick={createButtonHandler}>
         Добавить сайт
       </Button>
-      <Button className="btn btn-danger" disabled={newsEntityName ? false : true} onClick={editButtonHandler}>
+      <Button className="btn btn-danger" disabled={disableButton} onClick={editButtonHandler}>
         Редактировать
       </Button>
-      <Button className="btn btn-danger" disabled={newsEntityName ? false : true} onClick={deleteButtonHandler}>
+      <Button className="btn btn-danger" disabled={disableButton} onClick={deleteButtonHandler}>
         Удалить
       </Button>
       <table>

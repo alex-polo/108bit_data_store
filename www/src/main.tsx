@@ -14,14 +14,13 @@ export const queryClient = new QueryClient({
   //   },
   // },
   // },
-  // defaultOptions: {
-  //   queries: {
-  //     refetchOnWindowFocus: true,
-  //     refetchOnReconnect: true,
-  //     retry: 3,
-  //     staleTime: 0,
-  //   },
-  // },
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      retry: 3,
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

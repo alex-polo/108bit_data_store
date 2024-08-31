@@ -3,13 +3,14 @@ from typing import List
 
 import fastapi
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, update, insert
+from sqlalchemy import select, update, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import User, Parser, NewsGathering
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, CreateNewsGatheringQuery
+from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, CreateNewsGatheringQuery, \
+    NewsGatheringById
 
 logger = logging.getLogger(__name__)
 
@@ -146,9 +147,11 @@ async def get_all_news_gathering(session: AsyncSession = Depends(get_async_sessi
 
     list_news_entity: List[NewsGatheringResponse] = list()
     for row in (await session.execute(select(NewsGathering))).scalars().all():
+
         list_news_entity.append(NewsGatheringResponse(
             id=row.id,
             name=row.name,
+            url=row.url,
             description=row.description,
             vendor=row.vendor,
             field_tags=row.field_tags,
@@ -160,22 +163,30 @@ async def get_all_news_gathering(session: AsyncSession = Depends(get_async_sessi
 
 
 @admin_panel_router.post("/create-news-gathering",
-                        status_code=fastapi.status.HTTP_201_CREATED)
-async def create_news_gathering(data: CreateNewsGatheringQuery,session: AsyncSession = Depends(get_async_session),
+                         status_code=fastapi.status.HTTP_201_CREATED)
+async def create_news_gathering(data: CreateNewsGatheringQuery, session: AsyncSession = Depends(get_async_session),
                                 user: User = Depends(current_active_user)):
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    print(data)
-    """
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=True)
-    description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
-    vendor: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
-    field_tags: Mapped[Optional[str]] = mapped_column(String(1024), unique=False)
-    is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
-    # parser_id: Mapped[int] = mapped_column(ForeignKey("parsers.id"))
-    parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
-    parser: Mapped["Parser"] = relationship()
-    """
-    # await session.execute(insert(NewsGathering).values(name='username', fullname='Full Username'))
+    await session.execute(insert(NewsGathering).values(name=data.name,
+                                                       url=data.url,
+                                                       description=data.description,
+                                                       vendor=data.vendor,
+                                                       field_tags=data.field_tags,
+                                                       parser_id=data.parser_id,
+                                                       is_enable=True if data.is_enable == 'Да' else False
+                                                       ))
+
+    await session.commit()
+
+
+@admin_panel_router.post("/delete-news-gathering-by-id",
+                         status_code=fastapi.status.HTTP_200_OK)
+async def delete_news_gathering_by_id(data: NewsGatheringById, session: AsyncSession = Depends(get_async_session),
+                                      user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
+
+    await session.execute(delete(NewsGathering).where(NewsGathering.id == data.id))
+    await session.commit()

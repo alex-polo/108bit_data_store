@@ -35,11 +35,12 @@ export const getAllNewsEntityAPI = async (): Promise<AxiosResponse> => {
 };
 
 export const createNewsEntityAPI = async (data: Omit<INewsEntityData, 'id'>): Promise<AxiosResponse> => {
-  return apiClient.post<INewsEntityData>(
-    Endpoints.DASHBOARD.create_news_entity,
-    data
-    //   {
-    //   data,
-    // }
-  );
+  return apiClient.post<INewsEntityData>(Endpoints.DASHBOARD.create_news_entity, data);
+};
+
+export const deleteNewsEntityAPI = async (id: number): Promise<AxiosResponse> => {
+  const data = {
+    id: id,
+  };
+  return apiClient.post(Endpoints.DASHBOARD.delete_news_gathering, data);
 };

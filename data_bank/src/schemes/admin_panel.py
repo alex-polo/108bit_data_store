@@ -25,8 +25,9 @@ class ChangeParserQuery(BaseModel):
 
 
 class NewsGatheringResponse(BaseModel):
-    id: str
+    id: int
     name: Optional[str]
+    url: Optional[str]
     description: Optional[str]
     vendor: Optional[str]
     field_tags: Optional[str]
@@ -34,8 +35,13 @@ class NewsGatheringResponse(BaseModel):
     is_enable: str
 
 
+class NewsGatheringById(BaseModel):
+    id: int
+
+
 class CreateNewsGatheringQuery(BaseModel):
     name: Optional[str]
+    url: Optional[str]
     description: Optional[str]
     vendor: Optional[str]
     field_tags: Optional[str]

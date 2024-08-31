@@ -12,7 +12,8 @@ class NewsGathering(Base):
     __tablename__ = "news_gathering"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=True)
+    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=False)
+    url: Mapped[Optional[str]] = mapped_column(String(300), nullable=False, unique=False)
     description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
     vendor: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
     field_tags: Mapped[Optional[str]] = mapped_column(String(1024), unique=False)

@@ -17,6 +17,7 @@ export interface IParserChangeData {
 
 export interface INewsEntityData {
   id: number;
+  url: string;
   name: string;
   description: string;
   vendor: string;
