@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import User, Parser
+from src import User, Parser, NewsGathering
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse, GetParserQuery, ChangeParserQuery
+from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +74,31 @@ async def get_catalog_parsers(session: AsyncSession = Depends(get_async_session)
     return list_parsers
 
 
+@admin_panel_router.get("/get-active-news-parsers",
+                        status_code=fastapi.status.HTTP_200_OK,
+                        response_model=List[ParsersResponse])
+async def get_active_news_parsers(session: AsyncSession = Depends(get_async_session),
+                                  user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
+
+    list_parsers: List[ParsersResponse] = list()
+    for row in (await session.execute(
+            select(Parser).where(Parser.is_enable == True).where(
+                Parser.is_parser_scheme_missing == False).where(Parser.parser_type == 'news_parser'))).scalars().all():
+        list_parsers.append(ParsersResponse(
+            id=row.id,
+            system_name=row.system_name,
+            parser_name=row.parser_name,
+            description=row.description,
+            parser_type=row.parser_type,
+            is_enable='Да' if row.is_enable else 'Нет',
+            is_parser_scheme_missing='Отсутствует' if row.is_parser_scheme_missing else 'Активна',
+        ))
+
+    return list_parsers
+
+
 @admin_panel_router.get("/get-parser",
                         status_code=fastapi.status.HTTP_200_OK,
                         response_model=ParsersResponse)
@@ -109,6 +134,29 @@ async def save_change_parser(value: ChangeParserQuery,
                                   description=value.description,
                                   is_enable=True if value.is_enable == 'Да' else False))
     await session.commit()
+
+
+@admin_panel_router.get("/get-all-news-gathering",
+                        status_code=fastapi.status.HTTP_200_OK,
+                        response_model=List[NewsGatheringResponse])
+async def get_all_news_gathering(session: AsyncSession = Depends(get_async_session),
+                                 user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
+
+    list_news_entity: List[NewsGatheringResponse] = list()
+    for row in (await session.execute(select(NewsGathering))).scalars().all():
+        list_news_entity.append(NewsGatheringResponse(
+            id=row.id,
+            name=row.name,
+            description=row.description,
+            vendor=row.vendor,
+            field_tags=row.field_tags,
+            parser_id=row.parser_id,
+            is_enable='Да' if row.is_enable else 'Нет'
+        ))
+
+    return list_news_entity
 
 #
 #         await session.commit()

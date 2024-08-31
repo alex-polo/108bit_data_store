@@ -13,7 +13,7 @@ export const DashboardLayout = (): ReactElement => {
 
   return (
     <>
-      <Sidebar username={queryUserProfile.data?.email} isSuperUser={queryUserProfile.data?.is_superuser} />
+      <Sidebar />
       <div className="main">
         <NavBar username={queryUserProfile.isSuccess ? queryUserProfile.data?.email : 'undefined'} />
 

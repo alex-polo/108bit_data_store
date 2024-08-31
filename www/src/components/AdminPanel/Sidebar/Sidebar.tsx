@@ -1,8 +1,9 @@
 import { Nav, Navbar } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
+
+import { ApplicationRouting } from '../../routes/Routes';
 
 import style from './Sidebar.module.css';
-import { ApplicationRouting } from '../../routes/Routes';
-import { NavLink } from 'react-router-dom';
 
 export const Sidebar = () => {
   //   if (queryUserOrganizations.isLoading) return <SidebarSpinner />;
@@ -15,13 +16,19 @@ export const Sidebar = () => {
             <span className={style.header_text}>DataBank</span>
           </Navbar.Brand>
           <ul>
-            <li className="header_text">Example</li>
-            <NavLink className="header_text" to={ApplicationRouting.USER_PROFILE_ROUTE.metrics}>
+            <li className="header_text_menu">Настройки</li>
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.metrics}>
               Метрики
             </NavLink>
 
-            <NavLink className="header_text" to={ApplicationRouting.USER_PROFILE_ROUTE.parsers}>
-              Парсеры
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.parsers}>
+              Схемы парсеров
+            </NavLink>
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.newsGathering}>
+              Новости
+            </NavLink>
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.catalogGathering}>
+              Каталог
             </NavLink>
             {/* <NavLink className="btn btn-primary btn-sm" to={ApplicationRouting.USER_PROFILE.createObject}>
               + Новый объект

@@ -14,3 +14,13 @@ export interface IParserChangeData {
   description: string;
   is_enable: string;
 }
+
+export interface INewsEntityData {
+  id: number;
+  name: string;
+  description: string;
+  vendor: string;
+  field_tags: string;
+  is_enable: string;
+  parser_id: number;
+}

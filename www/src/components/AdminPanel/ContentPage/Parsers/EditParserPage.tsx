@@ -2,9 +2,11 @@ import { Button, Container, Form, Row, Spinner } from 'react-bootstrap';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { saveChangedParserAPI, useGetParser } from '../../../../services/AdminPanelService';
-import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { IParserChangeData } from '../../../../services/AdminPanelService/service.types';
+import { useParser } from '../../../../services/AdminPanelService/hooks/useParser';
+import { useSaveParser } from '../../../../services/AdminPanelService/hooks/useSaveParser';
 
 type TypeError = {
   parserName: string | null;
@@ -12,50 +14,28 @@ type TypeError = {
 };
 
 export const EditParserPage = () => {
-  const { parserSystemName } = useParams();
-  const queryParser = useGetParser(parserSystemName);
-
-  // const queryParser = useQuery({
-  //   queryKey: ['getParser', parserSystemName],
-  //   queryFn: () => getParsersAPI(parserSystemName ? parserSystemName : ''),
-  //   select: ({ data }) => data,
-  // });
-
   const navigate = useNavigate();
-  const saveChangedMutation = useMutation({ mutationFn: saveChangedParserAPI });
+  const { parserSystemName } = useParams();
+  const [errors, setErrors] = useState<TypeError>({ parserName: null, description: null });
 
-  const systemName = queryParser.data?.system_name;
-  // const parserName = queryParser.data?.parser_name;
-  // const description = queryParser.data?.description;
-  // const isEnable = queryParser.data?.is_enable;
-  // const disabledForm = queryParser.data?.is_parser_scheme_missing == 'Активна' ? false : true;
-
-  // const [parserName, setParserName] = useState<string>(
-  //   queryParser.data?.parser_name ? queryParser.data?.parser_name : ''
-  // );
-  // const [description, setDescription] = useState<string>(
-  //   queryParser.data?.description ? queryParser.data?.description : ''
-  // );
-  // const [isEnable, setIsEnable] = useState<string>(queryParser.data?.is_enable ? queryParser.data?.is_enable : '');
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({ queryKey: ['getParser', parserSystemName] });
+  const queryParser = useParser(parserSystemName);
+  const saveMutation = useSaveParser();
 
   const [parserName, setParserName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [isEnable, setIsEnable] = useState<string>('');
-  const [disabledForm, setDisabledForm] = useState<boolean>(
-    queryParser.data?.is_parser_scheme_missing == 'Активна' ? true : false
-  );
-  const [errors, setErrors] = useState<TypeError>({ parserName: null, description: null });
+  const [disabledForm, setDisabledForm] = useState<boolean>(true);
 
   useEffect(() => {
-    if (queryParser.isSuccess) console.log(queryParser.data);
+    if (queryParser.parser?.parser_name != undefined) setParserName(queryParser.parser?.parser_name);
 
-    if (queryParser.data?.parser_name != undefined) setParserName(queryParser.data?.parser_name);
+    if (queryParser.parser?.description != undefined) setDescription(queryParser.parser?.description);
 
-    if (queryParser.data?.description != undefined) setDescription(queryParser.data?.description);
+    if (queryParser.parser?.is_enable != undefined) setIsEnable(queryParser.parser?.is_enable);
 
-    if (queryParser.data?.is_enable != undefined) setIsEnable(queryParser.data?.is_enable);
-
-    if (queryParser.data?.is_parser_scheme_missing == 'Активна') setDisabledForm(false);
+    if (queryParser.parser?.is_parser_scheme_missing == 'Активна') setDisabledForm(false);
   }, [queryParser.isSuccess]);
 
   const backButtonHandler = () => {
@@ -78,20 +58,19 @@ export const EditParserPage = () => {
       setErrors(formErrors);
     } else {
       setErrors({ parserName: null, description: null });
-      console.log('save changed');
 
       const data: IParserChangeData = {
-        system_name: systemName ? systemName : '',
+        system_name: parserSystemName ? parserSystemName : '',
         parser_name: parserName,
         description: description,
         is_enable: isEnable,
       };
 
-      saveChangedMutation.mutate(data);
+      saveMutation.mutate(data);
     }
   };
 
-  if (saveChangedMutation.isSuccess) {
+  if (saveMutation.isSuccess) {
     navigate(-1);
   }
 
@@ -118,13 +97,13 @@ export const EditParserPage = () => {
               <h1>Редактирование парсера</h1>
               <br />
               <hr />
-              <p>Системное имя: {systemName}</p>
-              {queryParser.data?.parser_type == 'news_parser' ? (
+              <p>Системное имя: {parserSystemName}</p>
+              {queryParser.parser?.parser_type == 'news_parser' ? (
                 <p>Тип парсера: Новостной парсер</p>
               ) : (
                 <p>Тип парсера: Парсер каталога</p>
               )}
-              {queryParser.data?.is_parser_scheme_missing == 'Активна' ? (
+              {queryParser.parser?.is_parser_scheme_missing == 'Активна' ? (
                 <p>Схема парсера найдена в системе</p>
               ) : (
                 <p>Схема парсера не найдена в системе</p>
@@ -160,28 +139,16 @@ export const EditParserPage = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Парсер включен:</Form.Label>
                   <Form.Select
-                    // defaultValue={isEnable}
+                    value={isEnable === 'Да' ? isEnable : 'Нет'}
                     disabled={disabledForm}
                     onChange={(e) => setIsEnable(e.target.value)}
                   >
-                    {isEnable === 'Да' ? (
-                      <option selected value="Да">
-                        Да
-                      </option>
-                    ) : (
-                      <option value="Нет">Нет</option>
-                    )}
-                    {isEnable === 'Нет' ? (
-                      <option value="Да">Да</option>
-                    ) : (
-                      <option selected value="Нет">
-                        Нет
-                      </option>
-                    )}
+                    <option value="Да">Да</option>
+                    <option value="Нет">Нет</option>
                   </Form.Select>
                 </Form.Group>
 
-                {!saveChangedMutation.isPending ? (
+                {!saveMutation.isPending ? (
                   <Button className="btn btn-success" type="submit" variant="primary" disabled={disabledForm}>
                     Сохранить
                   </Button>

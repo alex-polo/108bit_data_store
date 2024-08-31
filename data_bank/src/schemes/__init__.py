@@ -1,1 +1,5 @@
-from .admin_panel import ParsersResponse, GetParserQuery, ChangeParserQuery
+from .admin_panel import (
+    ParsersResponse,
+    ChangeParserQuery,
+    NewsGatheringResponse
+)

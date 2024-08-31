@@ -7,18 +7,18 @@ import App from './App.tsx';
 import './index.css';
 
 export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: true,
-      // gcTime: 1000,
-    },
-  },
+  // defaultOptions: {
+  //   queries: {
+  //     refetchOnWindowFocus: true,
+  //     // gcTime: 1000,
+  //   },
+  // },
   // },
   // defaultOptions: {
   //   queries: {
   //     refetchOnWindowFocus: true,
-  //     refetchOnReconnect: false,
-  //     retry: 2,
+  //     refetchOnReconnect: true,
+  //     retry: 3,
   //     staleTime: 0,
   //   },
   // },

@@ -15,7 +15,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { TableRow } from './TableRow';
+import { TableRow } from '../../../utils/TableRow';
 import { IParserData } from '../../../../services/AdminPanelService';
 import { ApplicationRouting } from '../../../routes/Routes';
 
@@ -30,16 +30,24 @@ type Props = {
   serverData: IParserData[] | undefined;
 };
 
-export const ParserTable = (props: Props) => {
+export const NewsEntityTable = (props: Props) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [parserSystemName, setParserSystemName] = useState<string | null>(null);
+  const [newsEntityName, setNewsEntityName] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const data = useMemo(() => props.serverData ?? [], [props.serverData]);
 
-  const editRowParser = () => {
-    if (parserSystemName) navigate(ApplicationRouting.USER_PROFILE_LINK.editParser(parserSystemName));
+  const editButtonHandler = () => {
+    if (newsEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editParser(newsEntityName));
+  };
+
+  const createButtonHandler = () => {
+    navigate(ApplicationRouting.USER_PROFILE_LINK.createNewsGathering);
+  };
+
+  const deleteButtonHandler = () => {
+    navigate(-1);
   };
 
   const columnsUser = React.useMemo<ColumnDef<IParserData>[]>(
@@ -60,21 +68,33 @@ export const ParserTable = (props: Props) => {
         ),
       },
       {
-        accessorKey: 'system_name',
-        id: 'system_name',
-        header: () => 'Системное имя',
+        accessorKey: 'name',
+        id: 'name',
+        header: () => 'Название',
         cell: (info) => info.getValue(),
       },
       {
-        accessorFn: (row) => row.parser_name,
-        id: 'parser_name',
-        header: 'Имя парсера',
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: 'description',
+        accessorFn: (row) => row.description,
         id: 'description',
         header: 'Описание',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'vendor',
+        id: 'vendor',
+        header: 'Название производителя',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'field_tags',
+        id: 'field_tags',
+        header: 'Теги',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'parser_id',
+        id: 'parser_id',
+        header: 'Название схемы парсера',
         cell: (info) => info.getValue(),
       },
       {
@@ -87,24 +107,15 @@ export const ParserTable = (props: Props) => {
         },
         cell: (info) => info.getValue(),
       },
-      {
-        accessorKey: 'is_parser_scheme_missing',
-        id: 'is_parser_scheme_missing',
-        header: 'Схема в системе',
-        meta: {
-          filterVariant: 'select_parser_scheme_missing',
-        },
-        cell: (info) => info.getValue(),
-      },
     ],
     []
   );
 
   useEffect(() => {
     if (table.getSelectedRowModel().rows.length > 0) {
-      setParserSystemName(table.getSelectedRowModel().rows[0].original.system_name);
+      setNewsEntityName(table.getSelectedRowModel().rows[0].original.system_name);
     } else {
-      setParserSystemName(null);
+      setNewsEntityName(null);
     }
   });
 
@@ -127,16 +138,15 @@ export const ParserTable = (props: Props) => {
 
   return (
     <div className="p-2">
-      <Button className="btn btn-danger" disabled={parserSystemName ? false : true} onClick={editRowParser}>
+      <Button className="btn btn-success" onClick={createButtonHandler}>
+        Добавить сайт
+      </Button>
+      <Button className="btn btn-danger" disabled={newsEntityName ? false : true} onClick={editButtonHandler}>
         Редактировать
       </Button>
-      {/* <NavLink
-        className="btn btn-primary btn-sm"
-        to={ApplicationRouting.USER_PROFILE_LINK.editParser(parserSystemName ? parserSystemName : '')}
-      >
-        + Новый объект
-      </NavLink> */}
-
+      <Button className="btn btn-danger" disabled={newsEntityName ? false : true} onClick={deleteButtonHandler}>
+        Удалить
+      </Button>
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

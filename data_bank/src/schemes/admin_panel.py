@@ -20,5 +20,15 @@ class ChangeParserQuery(BaseModel):
     is_enable: str
 
 
-class GetParserQuery(BaseModel):
-    parser_system_name: str
+# class GetParserQuery(BaseModel):
+#     parser_system_name: str
+
+
+class NewsGatheringResponse(BaseModel):
+    id: str
+    name: Optional[str]
+    description: Optional[str]
+    vendor: Optional[str]
+    field_tags: Optional[str]
+    parser_id: int
+    is_enable: str

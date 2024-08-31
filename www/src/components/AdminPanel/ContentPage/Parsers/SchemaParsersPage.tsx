@@ -1,24 +1,13 @@
 import { Container, Row, Spinner } from 'react-bootstrap';
-import { useGetNewsParsers, useGetCatalogParsers } from '../../../services/AdminPanelService';
-import { ParserTable } from './Tables/Table';
+
+import { ParserTable } from './ParsersTable';
+import { useGetCatalogParsers, useGetNewsParsers } from '../../../../services/AdminPanelService/hooks';
 
 export const ParsersPage = () => {
   const queryNewsParser = useGetNewsParsers();
   const queryCatalogParser = useGetCatalogParsers();
 
   if (queryNewsParser.isLoading) <Spinner animation="grow" variant="primary" />;
-
-  //   if (queryNewsParser.isError) {
-  //     return (
-  //       <>
-  //         <h3>Error</h3>
-  //       </>
-  //     );
-  //   }
-
-  //   if (queryNewsParser.data?.length === 0) {
-  //     return <Navigate to={ApplicationRouting.USER_PROFILE.createObject} replace />;
-  //   }
 
   return (
     <>

@@ -45,6 +45,7 @@ type Props = {
 
 export const BreadcrumbPage = (props: Props) => {
   return (
+    // <Link to={props.url}>{props.name ? props.name : <MdOutlineCottage />}</Link>
     <>
       {props.emptyUrl ? (
         <span>{props.name}</span>
