@@ -4,3 +4,4 @@ export { useGetNewsParsers } from './useGetNewsParsers';
 export { useParser } from './useParser';
 export { useSaveParser } from './useSaveParser';
 export { useActiveParsers } from './useActiveParsers';
+export { useCreateNewsEntity } from './useCreateNewsEntity';

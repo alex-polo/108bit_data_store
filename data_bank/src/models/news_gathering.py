@@ -20,14 +20,3 @@ class NewsGathering(Base):
     # parser_id: Mapped[int] = mapped_column(ForeignKey("parsers.id"))
     parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
     parser: Mapped["Parser"] = relationship()
-
-    # class Parent(Base):
-    #     __tablename__ = "parent_table"
-    #
-    #     id: Mapped[int] = mapped_column(primary_key=True)
-    #     child_id: Mapped[int] = mapped_column(ForeignKey("child_table.id"))
-    #     child: Mapped["Child"] = relationship()
-
-
-
-

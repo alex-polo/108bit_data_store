@@ -3,13 +3,13 @@ from typing import List
 
 import fastapi
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import select, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import User, Parser, NewsGathering
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse
+from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, CreateNewsGatheringQuery
 
 logger = logging.getLogger(__name__)
 
@@ -158,103 +158,24 @@ async def get_all_news_gathering(session: AsyncSession = Depends(get_async_sessi
 
     return list_news_entity
 
-#
-#         await session.commit()
-#     except IntegrityError as error:
-#         print(error)
-#         raise HTTPException(status_code=fastapi.status.HTTP_409_CONFLICT, detail="Organization already exists")
-#     except Exception as error:
-#         print(error)
-#         raise HTTPException(status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal error server")
 
+@admin_panel_router.post("/create-news-gathering",
+                        status_code=fastapi.status.HTTP_201_CREATED)
+async def create_news_gathering(data: CreateNewsGatheringQuery,session: AsyncSession = Depends(get_async_session),
+                                user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-# @frontend_router.post("/update-organization",
-#                       status_code=fastapi.status.HTTP_200_OK)
-# async def update_organization(value: OrganizationResponse,
-#                               session: AsyncSession = Depends(get_async_session),
-#                               user: User = Depends(current_active_user)):
-#     if user.is_superuser is False:
-#         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN)
-#     try:
-#         await session.execute(update(Organization).values(name=value.name,
-#                                                           short_name=value.short_name,
-#                                                           address=value.address,
-#                                                           inn=value.inn,
-#                                                           supervisor=value.supervisor,
-#                                                           description=value.description,
-#                                                           is_active=value.is_active).filter_by(id=value.id))
-#         await session.commit()
-#     except IntegrityError as error:
-#         print(error)
-#         raise HTTPException(status_code=fastapi.status.HTTP_409_CONFLICT)
-#     except Exception as error:
-#         print(error)
-#
-#
-# @frontend_router.get("/get-organization",
-#                      status_code=fastapi.status.HTTP_200_OK, response_model=List[UserOrganizationsResponse])
-# async def get_organization(session: AsyncSession = Depends(get_async_session),
-#                            user: User = Depends(current_active_user)):
-#     if user.is_superuser is False:
-#         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN)
-#
-#     user_organizations_response = list()
-#     for organization_id, role_id in (await session.execute(
-#             select(UserOrganization.organization_id,
-#                    UserOrganization.role_id).where(UserOrganization.user_id == user.id))).all():
-#         user_organizations_response.append(
-#             UserOrganizationsResponse(
-#                 organization=OrganizationResponse.model_validate(
-#                     (await session.execute(select(Organization).where(Organization.id == organization_id))).scalar(),
-#                     from_attributes=True),
-#                 role=(await session.execute(
-#                     select(OrganizationUserRole.role_name).where(OrganizationUserRole.id == role_id))).scalar()
-#             )
-#         )
-#
-#     return user_organizations_response
-#
-#
-# @frontend_router.post("/create-object",
-#                       status_code=fastapi.status.HTTP_201_CREATED)
-# async def create_object(value: CreateObjectQuery,
-#                         session: AsyncSession = Depends(get_async_session),
-#                         user: User = Depends(current_active_user)):
-#     # if user.is_superuser is False:
-#     #     raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN)
-#     try:
-#         await session.execute(insert(Object).values(name=value.name, description=value.description))
-#         await session.commit()
-#     except IntegrityError as error:
-#         print(error)
-#         raise HTTPException(status_code=fastapi.status.HTTP_409_CONFLICT)
-#     except Exception as error:
-#         print(error)
-#
-#
-# @frontend_router.get("/get-objects",
-#                      status_code=fastapi.status.HTTP_200_OK, response_model=List[ObjectResponse])
-# async def get_objects(session: AsyncSession = Depends(get_async_session),
-#                       user: User = Depends(current_active_user)):
-#     if user.is_superuser is False:
-#         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN)
-#
-#     return [ObjectResponse.model_validate(row, from_attributes=True)
-#             for row in (await session.execute(select(Object))).scalars().all()]
-#
-#
-# @frontend_router.get("/get-all-users",
-#                      status_code=fastapi.status.HTTP_200_OK, response_model=List[UserRead])
-# async def get_all_users(session: AsyncSession = Depends(get_async_session),
-#                         # user: User = Depends(current_active_user)
-#                         ):
-#     # if user.is_superuser is False:
-#     #     raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN)
-#
-#     user_list = [UserRead.model_validate(row, from_attributes=True)
-#                  for row in (await session.execute(select(User))).scalars().all()]
-#     new_user_list = list()
-#     for _ in range(0, 1000):
-#         new_user_list.append(user_list[0])
-#         new_user_list.append(user_list[1])
-#     return new_user_list
+    print(data)
+    """
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=True)
+    description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
+    vendor: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
+    field_tags: Mapped[Optional[str]] = mapped_column(String(1024), unique=False)
+    is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
+    # parser_id: Mapped[int] = mapped_column(ForeignKey("parsers.id"))
+    parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
+    parser: Mapped["Parser"] = relationship()
+    """
+    # await session.execute(insert(NewsGathering).values(name='username', fullname='Full Username'))

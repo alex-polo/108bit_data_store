@@ -32,3 +32,12 @@ class NewsGatheringResponse(BaseModel):
     field_tags: Optional[str]
     parser_id: int
     is_enable: str
+
+
+class CreateNewsGatheringQuery(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    vendor: Optional[str]
+    field_tags: Optional[str]
+    parser_id: int
+    is_enable: str

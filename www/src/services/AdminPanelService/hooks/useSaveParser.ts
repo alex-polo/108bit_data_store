@@ -4,7 +4,7 @@ import { saveChangedParserAPI } from '../ApiRequest';
 
 export const useSaveParser = () => {
   const saveParserMutation = useMutation({
-    mutationKey: ['saveParser'],
+    mutationKey: ['createNewsEntity'],
     mutationFn: async (data: IParserChangeData) => saveChangedParserAPI(data),
   });
   //   const query = useQuery({

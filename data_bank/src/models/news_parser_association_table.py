@@ -2,12 +2,12 @@ from sqlalchemy import Table, Column, ForeignKey
 
 from .base import Base
 
-news_parser_association_table = Table(
-    "association_table",
-    Base.metadata,
-    Column("left_id", ForeignKey("left_table.id")),
-    Column("right_id", ForeignKey("right_table.id")),
-)
+# news_parser_association_table = Table(
+#     "association_table",
+#     Base.metadata,
+#     Column("left_id", ForeignKey("left_table.id")),
+#     Column("right_id", ForeignKey("right_table.id")),
+# )
 
 
 # class Parent(Base):

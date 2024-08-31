@@ -33,3 +33,13 @@ export const saveChangedParserAPI = async (data: IParserChangeData): Promise<Axi
 export const getAllNewsEntityAPI = async (): Promise<AxiosResponse> => {
   return apiClient.get<INewsEntityData[]>(Endpoints.DASHBOARD.get_all_news_entity);
 };
+
+export const createNewsEntityAPI = async (data: Omit<INewsEntityData, 'id'>): Promise<AxiosResponse> => {
+  return apiClient.post<INewsEntityData>(
+    Endpoints.DASHBOARD.create_news_entity,
+    data
+    //   {
+    //   data,
+    // }
+  );
+};
