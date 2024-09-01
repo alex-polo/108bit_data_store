@@ -5,6 +5,7 @@ import { IUserAccessToken, IUserLoginData, IUserProfile, UserProfile } from '../
 import { getUserProfileAPI, loginAPI, logoutAPI } from '../../services/AuthService';
 import { ApplicationRouting } from '../routes/Routes';
 import apiClient from '../../api/AxiosInstance';
+import axios from 'axios';
 
 type Props = { children: React.ReactNode };
 
@@ -69,6 +70,11 @@ export const AuthProvider = ({ children }: Props) => {
       const userProfileFormAPI: IUserProfile = (await getUserProfileAPI()).data;
       return userProfileFormAPI;
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status == 401) {
+          setUserProfile(null);
+        }
+      }
       console.log(error);
       throw new Error('Failed get user profile from server');
     }
