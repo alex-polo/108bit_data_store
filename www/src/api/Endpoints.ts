@@ -19,6 +19,11 @@ const Endpoints = {
     delete_news_gathering: `${BASE_ENDPOINT}/admin-panel/delete-news-gathering-by-id`,
     get_news_entity_by_name: `${BASE_ENDPOINT}/admin-panel/get-news-gathering-by-name`,
     get_active_news_parsers: `${BASE_ENDPOINT}/admin-panel/get-active-news-parsers`,
+    get_all_entity_catalogs_gathering: `${BASE_ENDPOINT}/admin-panel/get-all-entity-catalogs-gathering`,
+    create_catalog_entity: `${BASE_ENDPOINT}/admin-panel/create-catalog-gathering`,
+    update_catalog_entity: `${BASE_ENDPOINT}/admin-panel/update-catalog-gathering`,
+    delete_catalog_entity: `${BASE_ENDPOINT}/admin-panel/delete-catalog-gathering-by-id`,
+    get_catalog_entity_by_name: `${BASE_ENDPOINT}/admin-panel/get-catalog-gathering-by-name`,
   },
 };
 

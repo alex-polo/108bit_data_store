@@ -14,6 +14,11 @@ import './App.css';
 import { NewsGatheringPage } from './components/AdminPanel/ContentPage';
 import { AddNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering/AddNewsEntity';
 import { EditNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering';
+import {
+  CatalogsGathering,
+  CreateCatalogsEntity,
+  EditCatalogsEntity,
+} from './components/AdminPanel/ContentPage/CatalogsGathering';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,7 +45,7 @@ const router = createBrowserRouter(
             }}
           />
           <Route element={<DashboardContentLayout />}>
-            {/* Вложенные маршруты парсера */}
+            {/* Схемы парсеров */}
             <Route
               path={ApplicationRouting.USER_PROFILE_ROUTE.parsers}
               element={<ParsersPage />}
@@ -68,6 +73,7 @@ const router = createBrowserRouter(
               }}
             />
           </Route>
+          {/* Новостные ресурсы */}
           <Route element={<DashboardContentLayout />}>
             <Route
               path={ApplicationRouting.USER_PROFILE_ROUTE.newsGathering}
@@ -103,6 +109,48 @@ const router = createBrowserRouter(
                   <BreadcrumbPage
                     url={ApplicationRouting.USER_PROFILE_ROUTE.editNewsGathering}
                     name="Редактирование новостного ресурса"
+                    emptyUrl={true}
+                  />
+                ),
+              }}
+            />
+          </Route>
+          {/* Парсеры каталогов */}
+          <Route element={<DashboardContentLayout />}>
+            <Route
+              path={ApplicationRouting.USER_PROFILE_ROUTE.catalogsGathering}
+              element={<CatalogsGathering />}
+              handle={{
+                crumb: () => (
+                  <BreadcrumbPage
+                    url={ApplicationRouting.USER_PROFILE_ROUTE.catalogsGathering}
+                    name="Ресурсы каталогов"
+                    emptyUrl={false}
+                  />
+                ),
+              }}
+            />
+            <Route
+              path={ApplicationRouting.USER_PROFILE_ROUTE.createCatalogsGathering}
+              element={<CreateCatalogsEntity />}
+              handle={{
+                crumb: () => (
+                  <BreadcrumbPage
+                    url={ApplicationRouting.USER_PROFILE_ROUTE.createCatalogsGathering}
+                    name="Редактирование ресурса каталога"
+                    emptyUrl={true}
+                  />
+                ),
+              }}
+            />
+            <Route
+              path={ApplicationRouting.USER_PROFILE_ROUTE.editCatalogsGathering}
+              element={<EditCatalogsEntity />}
+              handle={{
+                crumb: () => (
+                  <BreadcrumbPage
+                    url={ApplicationRouting.USER_PROFILE_ROUTE.editCatalogsGathering}
+                    name="Редактирование ресурса каталога"
                     emptyUrl={true}
                   />
                 ),

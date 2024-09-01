@@ -25,3 +25,12 @@ export interface INewsEntityData {
   is_enable: string;
   parser_id: number;
 }
+
+export interface ICatalogEntityData {
+  id: number;
+  name: string;
+  url: string;
+  description: string;
+  is_enable: string;
+  parser_id: number;
+}

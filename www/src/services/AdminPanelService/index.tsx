@@ -1,1 +1,1 @@
-export type { IParserData, IParserChangeData, INewsEntityData } from './service.types';
+export type { IParserData, IParserChangeData, INewsEntityData, ICatalogEntityData } from './service.types';

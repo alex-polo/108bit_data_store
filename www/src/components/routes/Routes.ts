@@ -5,23 +5,25 @@ export const ApplicationRouting = {
   },
   USER_PROFILE_ROUTE: {
     home: '/admin-panel',
+    metrics: 'metrics',
     parsers: 'parsers',
     editParser: 'parsers/edit-parser/:parserSystemName',
     editSite: 'parsers/edit-site/:siteName',
     newsGathering: 'news-gathering',
     createNewsGathering: 'news-gathering/create-news-gathering',
     editNewsGathering: 'news-gathering/edit-news-gathering/:siteName',
-    catalogGathering: 'catalog-gathering',
-    metrics: 'metrics',
 
-    noObjectsRoute: 'no-objects/:objectName',
-    objectSettingsRoute: 'object-settings/:objectName',
+    catalogsGathering: 'catalogs-gathering',
+    createCatalogsGathering: 'catalogs-gathering/create-catalog-gathering',
+    editCatalogsGathering: 'catalogs-gathering/edit-catalog-gathering/:siteName',
   },
   USER_PROFILE_LINK: {
     editParser: (parserSystemName: string) => `edit-parser/${parserSystemName}`,
-    // editSite: (siteName: string) => `edit-site/${siteName}`,
     editNewsGatheringEntity: (siteName: string) => `edit-news-gathering/${siteName}`,
     createNewsGatheringEntity: `create-news-gathering`,
+
+    editCatalogGatheringEntity: (siteName: string) => `edit-catalog-gathering/${siteName}`,
+    createCatalogGatheringEntity: `create-catalog-gathering`,
   },
   PUBLIC: {
     home: '/',

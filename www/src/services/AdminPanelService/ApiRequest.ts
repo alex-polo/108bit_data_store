@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import apiClient from '../../api/AxiosInstance';
-import { INewsEntityData, IParserChangeData, IParserData } from './service.types';
+import { ICatalogEntityData, INewsEntityData, IParserChangeData, IParserData } from './service.types';
 import Endpoints from '../../api/Endpoints';
 
 export const getNewsParsersAPI = async (): Promise<AxiosResponse> => {
@@ -53,4 +53,30 @@ export const getNewsEntityByNameParsersAPI = async (name: string): Promise<Axios
   return apiClient.get<INewsEntityData>(Endpoints.DASHBOARD.get_news_entity_by_name, {
     params: { name: name },
   });
+};
+
+export const getAllCatalogsEntityAPI = async (): Promise<AxiosResponse> => {
+  return apiClient.get<ICatalogEntityData[]>(Endpoints.DASHBOARD.get_all_entity_catalogs_gathering);
+};
+
+export const createCatalogEntityAPI = async (data: ICatalogEntityData): Promise<AxiosResponse> => {
+  return apiClient.post<Omit<ICatalogEntityData, 'id'>>(Endpoints.DASHBOARD.create_catalog_entity, data);
+};
+
+export const updateCatalogEntityAPI = async (data: ICatalogEntityData): Promise<AxiosResponse> => {
+  return apiClient.post<ICatalogEntityData>(Endpoints.DASHBOARD.update_catalog_entity, data);
+};
+
+export const getCatalogEntityByNameAPI = async (name: string): Promise<AxiosResponse> => {
+  return apiClient.get<ICatalogEntityData>(Endpoints.DASHBOARD.get_catalog_entity_by_name, {
+    params: { name: name },
+  });
+};
+
+export const deleteCatalogEntityAPI = async (id: number): Promise<AxiosResponse> => {
+  const data = {
+    id: id,
+  };
+
+  return apiClient.post(Endpoints.DASHBOARD.delete_catalog_entity, data);
 };

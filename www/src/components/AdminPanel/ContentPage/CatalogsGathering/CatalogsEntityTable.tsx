@@ -16,9 +16,10 @@ import {
 } from '@tanstack/react-table';
 
 import { TableRow } from '../../../utils/TableRow';
-import { INewsEntityData } from '../../../../services/AdminPanelService';
+
 import { ApplicationRouting } from '../../../routes/Routes';
-import { useAllNewsEntity, useDeleteNewsEntity } from '../../../../services/AdminPanelService/hooks';
+import { useAllCatalogsEntity, useDeleteCatalogEntity } from '../../../../services/AdminPanelService/hooks';
+import { ICatalogEntityData } from '../../../../services/AdminPanelService';
 
 declare module '@tanstack/react-table' {
   //allows us to define custom properties for our columns
@@ -27,45 +28,32 @@ declare module '@tanstack/react-table' {
   }
 }
 
-// type Props = {
-//   serverData: IParserData[] | undefined;
-// };
+export const CatalogsEntityTable = () => {
+  const navigate = useNavigate();
 
-export const NewsEntityTable = () => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [newsEntityName, setNewsEntityName] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const deleteEntityMutation = useDeleteNewsEntity();
-  const queryNewsEntity = useAllNewsEntity();
+  const [catalogEntityName, setCatalogEntityName] = useState<string | null>(null);
+  const deleteEntityMutation = useDeleteCatalogEntity();
+  const queryCatalogsEntity = useAllCatalogsEntity();
   // const queryClient = useQueryClient();
   const [disableButton, setDisableButton] = useState<boolean>(true);
-  let update = false;
 
-  // const [data, setData] = React.useState(() => queryNewsEntity.newsEntity);
-  // const refreshData = () => setData(() => queryNewsEntity.newsEntity);
-
-  const data = useMemo(() => queryNewsEntity.newsEntity ?? [], [queryNewsEntity.newsEntity]);
-  // const [data, setData] = React.useState<Person[]>([])
+  const data = useMemo(() => queryCatalogsEntity.catalogsEntity ?? [], [queryCatalogsEntity.catalogsEntity]);
 
   const editButtonHandler = () => {
-    if (newsEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editNewsGatheringEntity(newsEntityName));
+    if (catalogEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editCatalogGatheringEntity(catalogEntityName));
   };
 
   const createButtonHandler = () => {
-    navigate(ApplicationRouting.USER_PROFILE_LINK.createNewsGatheringEntity);
+    navigate(ApplicationRouting.USER_PROFILE_LINK.createCatalogGatheringEntity);
   };
 
   const deleteButtonHandler = () => {
-    queryNewsEntity.refetch();
     deleteEntityMutation.mutate(table.getSelectedRowModel().rows[0].original.id);
   };
 
-  useEffect(() => {
-    queryNewsEntity.refetch();
-  }, [update]);
-
-  const columnsUser = React.useMemo<ColumnDef<INewsEntityData>[]>(
+  const columnsUser = React.useMemo<ColumnDef<ICatalogEntityData>[]>(
     () => [
       {
         id: 'select',
@@ -89,21 +77,15 @@ export const NewsEntityTable = () => {
         cell: (info) => info.getValue(),
       },
       {
+        accessorFn: (row) => row.url,
+        id: 'Адрес',
+        header: 'Адрес',
+        cell: (info) => info.getValue(),
+      },
+      {
         accessorFn: (row) => row.description,
         id: 'description',
         header: 'Описание',
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: 'vendor',
-        id: 'vendor',
-        header: 'Название производителя',
-        cell: (info) => info.getValue(),
-      },
-      {
-        accessorKey: 'field_tags',
-        id: 'field_tags',
-        header: 'Теги',
         cell: (info) => info.getValue(),
       },
       // {
@@ -128,13 +110,12 @@ export const NewsEntityTable = () => {
 
   useEffect(() => {
     if (table.getSelectedRowModel().rows.length > 0) {
-      setNewsEntityName(table.getSelectedRowModel().rows[0].original.name);
+      setCatalogEntityName(table.getSelectedRowModel().rows[0].original.name);
       setDisableButton(false);
     } else {
       setDisableButton(true);
-      setNewsEntityName(null);
+      setCatalogEntityName(null);
     }
-    // queryNewsEntity.refetch();
   });
 
   const table = useReactTable({
@@ -154,9 +135,9 @@ export const NewsEntityTable = () => {
     onRowSelectionChange: setRowSelection,
   });
 
-  if (queryNewsEntity.isLoading) <Spinner animation="grow" variant="primary" />;
+  if (queryCatalogsEntity.isLoading) <Spinner animation="grow" variant="primary" />;
 
-  if (queryNewsEntity.isError) <p>Ошибка получения данных</p>;
+  if (queryCatalogsEntity.isError) <p>Ошибка получения данных</p>;
 
   return (
     <div className="p-2">

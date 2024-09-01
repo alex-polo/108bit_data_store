@@ -1,13 +1,12 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { IParserData } from '../service.types';
+import { useQuery } from '@tanstack/react-query';
 import { getCatalogParsersAPI } from '../ApiRequest';
 
-export const useGetCatalogParsers = (): UseQueryResult<IParserData[], Error> => {
-  const query = useQuery({
+export const useGetCatalogParsers = () => {
+  const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ['getCatalogParsers'],
     queryFn: getCatalogParsersAPI,
     select: (data) => data.data,
   });
 
-  return query;
+  return { parsers: data, isSuccess, isLoading, isError };
 };

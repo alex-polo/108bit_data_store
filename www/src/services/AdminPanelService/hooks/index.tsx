@@ -8,3 +8,8 @@ export { useCreateNewsEntity } from './useCreateNewsEntity';
 export { useDeleteNewsEntity } from './useDeleteNewsEntity';
 export { useNewsEntityByName } from './useNewsEntityByName';
 export { useUpdateNewsEntity } from './useUpdateNewsEntity';
+export { useAllCatalogsEntity } from './useAllCatalogsEntity';
+export { useCreateCatalogEntity } from './useCreateCatalogsEntity';
+export { useCatalogEntityByName } from './useCatalogEntityByName';
+export { useUpdateCatalogEntity } from './useUpdateCatalogEntity';
+export { useDeleteCatalogEntity } from './useDeleteCatalogEntity';

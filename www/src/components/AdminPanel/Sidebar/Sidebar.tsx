@@ -6,8 +6,6 @@ import { ApplicationRouting } from '../../routes/Routes';
 import style from './Sidebar.module.css';
 
 export const Sidebar = () => {
-  //   if (queryUserOrganizations.isLoading) return <SidebarSpinner />;
-
   return (
     <>
       <div id="sidebar" className="sidebar">
@@ -27,7 +25,7 @@ export const Sidebar = () => {
             <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.newsGathering}>
               Новости
             </NavLink>
-            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.catalogGathering}>
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.catalogsGathering}>
               Каталог
             </NavLink>
             {/* <NavLink className="btn btn-primary btn-sm" to={ApplicationRouting.USER_PROFILE.createObject}>
@@ -35,32 +33,6 @@ export const Sidebar = () => {
             </NavLink> */}
             {/* <li>Настройки</li> */}
           </ul>
-
-          {/* {queryUserOrganizations.isLoading ? (
-            queryUserOrganizations.data?.length ? (<></>) : (<></>)
-            if (data?.length === 0) {
-              return (
-                <>
-                  <ul>
-                    <li>Ваш аккаунт не подтвержден</li>
-                  </ul>
-                </>
-              );
-            }
-
-            Спиннер
-            <SidebarSpinner />
-          ) : // Проверка на суперпользователя
-          props.isSuperUser ? (
-            // Отрисовываем меню супепользователя
-            <SuperuserMenu organizations={queryUserOrganizations.data} />
-          ) : // Отрисовываем меню обычного пользователя
-          queryUserOrganizations.data != undefined ? (
-            <UserMenu organizations={queryUserOrganizations.data} />
-          ) : (
-            <span>Error</span>
-          )}
-          <SidebarSpinner /> */}
         </Nav>
       </div>
     </>

@@ -31,11 +31,15 @@ class NewsGatheringResponse(BaseModel):
     description: Optional[str]
     vendor: Optional[str]
     field_tags: Optional[str]
-    parser_id: int
+    parser_id: Optional[int]
     is_enable: str
 
 
 class NewsGatheringById(BaseModel):
+    id: int
+
+
+class CatalogGatheringById(BaseModel):
     id: int
 
 
@@ -47,4 +51,13 @@ class NewsGatheringQuery(BaseModel):
     vendor: Optional[str]
     field_tags: Optional[str]
     parser_id: int
+    is_enable: str
+
+
+class CatalogGatheringEntity(BaseModel):
+    id: int
+    name: Optional[str]
+    url: Optional[str]
+    description: Optional[str]
+    parser_id: Optional[int]
     is_enable: str
