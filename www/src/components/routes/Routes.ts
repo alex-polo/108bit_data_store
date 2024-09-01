@@ -10,6 +10,7 @@ export const ApplicationRouting = {
     editSite: 'parsers/edit-site/:siteName',
     newsGathering: 'news-gathering',
     createNewsGathering: 'news-gathering/create-news-gathering',
+    editNewsGathering: 'news-gathering/edit-news-gathering/:siteName',
     catalogGathering: 'catalog-gathering',
     metrics: 'metrics',
 
@@ -18,8 +19,9 @@ export const ApplicationRouting = {
   },
   USER_PROFILE_LINK: {
     editParser: (parserSystemName: string) => `edit-parser/${parserSystemName}`,
-    editSite: (siteName: string) => `edit-site/${siteName}`,
-    createNewsGathering: 'create-news-gathering',
+    // editSite: (siteName: string) => `edit-site/${siteName}`,
+    editNewsGatheringEntity: (siteName: string) => `edit-news-gathering/${siteName}`,
+    createNewsGatheringEntity: `create-news-gathering`,
   },
   PUBLIC: {
     home: '/',

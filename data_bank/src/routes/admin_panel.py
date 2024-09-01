@@ -9,8 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import User, Parser, NewsGathering
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, CreateNewsGatheringQuery, \
-    NewsGatheringById
+from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, NewsGatheringQuery
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +128,6 @@ async def save_change_parser(value: ChangeParserQuery,
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN, detail="User is not superuser")
 
-    print((await session.execute(select(Parser).where(Parser.system_name == value.system_name))).scalar())
     await session.execute(update(Parser).where(Parser.system_name == value.system_name)
                           .values(parser_name=value.parser_name,
                                   description=value.description,
@@ -147,7 +145,6 @@ async def get_all_news_gathering(session: AsyncSession = Depends(get_async_sessi
 
     list_news_entity: List[NewsGatheringResponse] = list()
     for row in (await session.execute(select(NewsGathering))).scalars().all():
-
         list_news_entity.append(NewsGatheringResponse(
             id=row.id,
             name=row.name,
@@ -164,7 +161,7 @@ async def get_all_news_gathering(session: AsyncSession = Depends(get_async_sessi
 
 @admin_panel_router.post("/create-news-gathering",
                          status_code=fastapi.status.HTTP_201_CREATED)
-async def create_news_gathering(data: CreateNewsGatheringQuery, session: AsyncSession = Depends(get_async_session),
+async def create_news_gathering(data: NewsGatheringQuery, session: AsyncSession = Depends(get_async_session),
                                 user: User = Depends(current_active_user)):
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
@@ -183,10 +180,52 @@ async def create_news_gathering(data: CreateNewsGatheringQuery, session: AsyncSe
 
 @admin_panel_router.post("/delete-news-gathering-by-id",
                          status_code=fastapi.status.HTTP_200_OK)
-async def delete_news_gathering_by_id(data: NewsGatheringById, session: AsyncSession = Depends(get_async_session),
+async def delete_news_gathering_by_id(data: NewsGatheringQuery, session: AsyncSession = Depends(get_async_session),
                                       user: User = Depends(current_active_user)):
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
     await session.execute(delete(NewsGathering).where(NewsGathering.id == data.id))
+    await session.commit()
+
+
+@admin_panel_router.get("/get-news-gathering-by-name",
+                        status_code=fastapi.status.HTTP_200_OK,
+                        response_model=NewsGatheringResponse)
+async def get_news_gathering_by_name(name: str,
+                                     session: AsyncSession = Depends(get_async_session),
+                                     user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
+
+    news_entity = (await session.execute(select(NewsGathering).where(NewsGathering.name == name))).scalar()
+    return NewsGatheringResponse(
+        id=news_entity.id,
+        name=news_entity.name,
+        url=news_entity.url,
+        description=news_entity.description,
+        vendor=news_entity.vendor,
+        field_tags=news_entity.field_tags,
+        parser_id=news_entity.parser_id,
+        is_enable='Да' if news_entity.is_enable else 'Нет'
+    )
+
+
+@admin_panel_router.post("/update-news-entity",
+                         status_code=fastapi.status.HTTP_202_ACCEPTED)
+async def update_news_entity(data: NewsGatheringQuery,
+                             session: AsyncSession = Depends(get_async_session),
+                             user: User = Depends(current_active_user)):
+    if user.is_superuser is False:
+        raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN, detail="User is not superuser")
+    await session.execute(update(NewsGathering)
+                          .where(NewsGathering.id == data.id)
+                          .values(name=data.name,
+                                  url=data.url,
+                                  description=data.description,
+                                  vendor=data.vendor,
+                                  field_tags=data.field_tags,
+                                  parser_id=data.parser_id,
+                                  is_enable=True if data.is_enable == 'Да' else False
+                                  ))
     await session.commit()

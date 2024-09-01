@@ -38,9 +38,19 @@ export const createNewsEntityAPI = async (data: Omit<INewsEntityData, 'id'>): Pr
   return apiClient.post<INewsEntityData>(Endpoints.DASHBOARD.create_news_entity, data);
 };
 
+export const updateNewsEntityAPI = async (data: INewsEntityData): Promise<AxiosResponse> => {
+  return apiClient.post<INewsEntityData>(Endpoints.DASHBOARD.update_news_entity, data);
+};
+
 export const deleteNewsEntityAPI = async (id: number): Promise<AxiosResponse> => {
   const data = {
     id: id,
   };
   return apiClient.post(Endpoints.DASHBOARD.delete_news_gathering, data);
+};
+
+export const getNewsEntityByNameParsersAPI = async (name: string): Promise<AxiosResponse> => {
+  return apiClient.get<INewsEntityData>(Endpoints.DASHBOARD.get_news_entity_by_name, {
+    params: { name: name },
+  });
 };

@@ -16,7 +16,7 @@ import {
 } from '@tanstack/react-table';
 
 import { TableRow } from '../../../utils/TableRow';
-import { IParserData } from '../../../../services/AdminPanelService';
+import { INewsEntityData } from '../../../../services/AdminPanelService';
 import { ApplicationRouting } from '../../../routes/Routes';
 import { useAllNewsEntity, useDeleteNewsEntity } from '../../../../services/AdminPanelService/hooks';
 
@@ -43,23 +43,21 @@ export const NewsEntityTable = () => {
 
   // serverData={queryNewsEntity.newsEntity}
   const data = useMemo(() => queryNewsEntity.newsEntity ?? [], [queryNewsEntity.newsEntity]);
+  // const [data, setData] = React.useState<Person[]>([])
 
   const editButtonHandler = () => {
-    if (newsEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editParser(newsEntityName));
+    if (newsEntityName) navigate(ApplicationRouting.USER_PROFILE_LINK.editNewsGatheringEntity(newsEntityName));
   };
 
   const createButtonHandler = () => {
-    navigate(ApplicationRouting.USER_PROFILE_LINK.createNewsGathering);
+    navigate(ApplicationRouting.USER_PROFILE_LINK.createNewsGatheringEntity);
   };
 
   const deleteButtonHandler = () => {
-    // queryNewsEntity.dataUpdatedAt;
     deleteEntityMutation.mutate(table.getSelectedRowModel().rows[0].original.id);
-    // queryClient.invalidateQueries({ queryKey: ['AllNewsEntity'] });
-    // queryClient.refetchQueries({ queryKey: ['AllNewsEntity'] });
   };
 
-  const columnsUser = React.useMemo<ColumnDef<IParserData>[]>(
+  const columnsUser = React.useMemo<ColumnDef<INewsEntityData>[]>(
     () => [
       {
         id: 'select',
@@ -100,12 +98,12 @@ export const NewsEntityTable = () => {
         header: 'Теги',
         cell: (info) => info.getValue(),
       },
-      {
-        accessorKey: 'parser_id',
-        id: 'parser_id',
-        header: 'Название схемы парсера',
-        cell: (info) => info.getValue(),
-      },
+      // {
+      //   accessorKey: 'parser_id',
+      //   id: 'parser_id',
+      //   header: 'Название схемы парсера',
+      //   cell: (info) => info.getValue(),
+      // },
       {
         accessorKey: 'is_enable',
         accessor: 'is_enable',
@@ -122,13 +120,13 @@ export const NewsEntityTable = () => {
 
   useEffect(() => {
     if (table.getSelectedRowModel().rows.length > 0) {
-      setNewsEntityName(table.getSelectedRowModel().rows[0].original.system_name);
+      setNewsEntityName(table.getSelectedRowModel().rows[0].original.name);
       setDisableButton(false);
     } else {
       setDisableButton(true);
       setNewsEntityName(null);
     }
-    queryNewsEntity.refetch();
+    // queryNewsEntity.refetch();
   });
 
   const table = useReactTable({
@@ -275,22 +273,6 @@ export const NewsEntityTable = () => {
 function Filter({ column }: { column: Column<any, unknown> }) {
   let columnFilterValue = column.getFilterValue();
   const { filterVariant } = column.columnDef.meta ?? {};
-
-  if (filterVariant === 'select_parser_scheme_missing') {
-    return (
-      <select
-        onChange={(e) => {
-          column.setFilterValue(e.target.value);
-        }}
-        value={columnFilterValue?.toString()}
-      >
-        {/* See faceted column filters example for dynamic select options */}
-        <option value="">Показать все</option>
-        <option value="Активна" label="Активна" />
-        <option value="Отсутствует" label="Отсутствует" />
-      </select>
-    );
-  }
 
   return filterVariant === 'select_is_enabled' ? (
     <select

@@ -13,6 +13,7 @@ import { BreadcrumbPage, MetricsPage, ParsersPage, EditParserPage } from './comp
 import './App.css';
 import { NewsGatheringPage } from './components/AdminPanel/ContentPage';
 import { AddNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering/AddNewsEntity';
+import { EditNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -88,7 +89,20 @@ const router = createBrowserRouter(
                 crumb: () => (
                   <BreadcrumbPage
                     url={ApplicationRouting.USER_PROFILE_ROUTE.createNewsGathering}
-                    name="Создание новостного ресурса"
+                    name="Редактирование новостного ресурса"
+                    emptyUrl={true}
+                  />
+                ),
+              }}
+            />
+            <Route
+              path={ApplicationRouting.USER_PROFILE_ROUTE.editNewsGathering}
+              element={<EditNewsEntity />}
+              handle={{
+                crumb: () => (
+                  <BreadcrumbPage
+                    url={ApplicationRouting.USER_PROFILE_ROUTE.editNewsGathering}
+                    name="Редактирование новостного ресурса"
                     emptyUrl={true}
                   />
                 ),

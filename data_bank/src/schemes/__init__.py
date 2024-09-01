@@ -1,7 +1,6 @@
 from .admin_panel import (
     ParsersResponse,
     ChangeParserQuery,
-    NewsGatheringResponse,
-    CreateNewsGatheringQuery
+    NewsGatheringResponse
 )
 from .admin_panel import *

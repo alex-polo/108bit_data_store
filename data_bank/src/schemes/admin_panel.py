@@ -39,7 +39,8 @@ class NewsGatheringById(BaseModel):
     id: int
 
 
-class CreateNewsGatheringQuery(BaseModel):
+class NewsGatheringQuery(BaseModel):
+    id: Optional[int] = -1
     name: Optional[str]
     url: Optional[str]
     description: Optional[str]
