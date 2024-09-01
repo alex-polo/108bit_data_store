@@ -5,7 +5,7 @@ export const CatalogsGathering = () => {
   return (
     <>
       <Row>
-        <h1>Новостные ресурсы</h1>
+        <h1>Ресурсы каталогов</h1>
       </Row>
       <Row>
         <CatalogsEntityTable />
