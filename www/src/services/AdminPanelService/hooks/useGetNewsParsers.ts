@@ -1,11 +1,12 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { IParserData } from '../service.types';
+import { useQuery } from '@tanstack/react-query';
 import { getNewsParsersAPI } from '../ApiRequest';
 
-export const useGetNewsParsers = (): UseQueryResult<IParserData[], Error> => {
-  return useQuery({
+export const useGetNewsParsers = () => {
+  const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ['getNewsParsers'],
     queryFn: getNewsParsersAPI,
-    select: ({ data }) => data,
+    select: (data) => data.data,
   });
+
+  return { parsers: data, isSuccess, isLoading, isError };
 };

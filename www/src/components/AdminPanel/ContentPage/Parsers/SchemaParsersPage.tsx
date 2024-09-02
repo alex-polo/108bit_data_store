@@ -20,7 +20,7 @@ export const ParsersPage = () => {
           {queryNewsParser.isError ? (
             <p>Ошибка получения новостных парсеров</p>
           ) : (
-            <ParserTable serverData={queryNewsParser.data} />
+            <ParserTable serverData={queryNewsParser.parsers} />
           )}
         </Row>
         <Row>
@@ -28,7 +28,7 @@ export const ParsersPage = () => {
           {queryCatalogParser.isError ? (
             <p>Ошибка получения парсеров каталогов</p>
           ) : (
-            <ParserTable serverData={queryCatalogParser.data} />
+            <ParserTable serverData={queryCatalogParser.parsers} />
           )}
         </Row>
       </Container>

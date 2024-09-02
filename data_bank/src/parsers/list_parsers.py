@@ -1,16 +1,9 @@
-from .news_parsers import wirenboard_parser
+from typing import List
 
-list_parsers = [
-    {
-        'system_name': 'wirenboard_parser',
-        'parser_name': 'Wirenboard',
-        'parser_type': 'news_parser',
-        'parser_func': wirenboard_parser
-    },
-    {
-        'system_name': 'wirenboard_parser_1',
-        'parser_name': 'Wirenboard2',
-        'parser_type': 'news_parser',
-        'parser_func': wirenboard_parser
-    }
-]
+from .schemes_catalogs_parsers import list_catalogs_parsers
+from .schemes_news_parsers import list_news_parsers
+
+list_parsers: List[dict] = list()
+
+list_parsers.extend(list_news_parsers)
+list_parsers.extend(list_catalogs_parsers)

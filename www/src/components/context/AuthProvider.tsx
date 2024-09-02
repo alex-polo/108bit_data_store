@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: Props) => {
   const unauthorized = () => {
     localStorage.removeItem('userProfile');
     setUserProfile(null);
-    navigate(ApplicationRouting.AUTH.login);
+    // navigate(ApplicationRouting.AUTH.login);
   };
 
   const loginUser = async (loginData: IUserLoginData): Promise<void> => {
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: Props) => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status == 401) {
-          setUserProfile(null);
+          unauthorized();
         }
       }
       console.log(error);
