@@ -66,8 +66,10 @@ def get_settings_value(property: str) -> str:
         session.close()
     return value
 
+
 def get_min_time_delta() -> int:
     return int(get_settings_value(property='number_of_days_to_view_sites'))
+
 
 def get_format_post_params() -> FormatPostParamsConfig:
     return FormatPostParamsConfig(
