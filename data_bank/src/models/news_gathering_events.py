@@ -2,9 +2,10 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Integer, String, ForeignKey, Boolean, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .news_posts import NewsPosts
 
 
 class NewsGatheringEvents(Base):
@@ -15,3 +16,5 @@ class NewsGatheringEvents(Base):
     event: Mapped[str] = mapped_column(String(50), nullable=False, unique=False)
     is_success: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
     created_on: Mapped[DateTime] = mapped_column(DateTime(), default=datetime.now)
+
+    grubber_events = relationship(NewsPosts, passive_deletes=True)

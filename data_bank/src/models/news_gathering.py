@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 from .parser import Parser
+from .news_gathering_events import NewsGatheringEvents
 
 
 class NewsGathering(Base):
@@ -20,3 +21,5 @@ class NewsGathering(Base):
     is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
     parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
     parser: Mapped["Parser"] = relationship()
+
+    grubber_events = relationship(NewsGatheringEvents, passive_deletes=True)

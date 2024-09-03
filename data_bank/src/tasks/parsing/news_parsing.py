@@ -94,7 +94,6 @@ def parse(download_page_content: str,
     try:
         logger.debug(f'Parsing site: {news_site.get("name")}, url: {news_site.get("url")}')
         parser = news_site.get('parser_func')
-        print(f'parser: {parser}')
 
         parser_response: List[ParsedData] = parser(site=news_site,
                                                    page_body=download_page_content,

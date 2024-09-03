@@ -3,14 +3,16 @@ import logging
 import traceback
 from typing import Union, List
 
-from sqlalchemy import insert, CursorResult, Row, select
+from sqlalchemy import select
 
-from src import NewsGatheringEvents, NewsGatheringMalfunctions, Settings
+from src import Settings
 from src.config import get_browser_chrome_config, FormatPostParamsConfig
 from src.database import get_session
 from src.parsers import list_parsers
 from src.tasks.celery import celery
+from src.tasks.mics import registry_grubber_error
 from src.tasks.parsing.loader import download
+from src.tasks.parsing.news_adding_post import add_post
 from src.tasks.parsing.news_parsing import parse
 from src.tasks.parsing.news_post_editor import post_formation
 from src.utils.classes import SuccessResponse, MalfunctionResponse, Status, ParsedData
@@ -24,42 +26,6 @@ def search_parser_function(parser_system_name: str):
             return parser.get('parser_func')
 
 
-def registry_grubber_error(news_site_id: int, error_response: MalfunctionResponse) -> None:
-    with get_session() as session:
-        try:
-            cursor: CursorResult = session.execute(
-                insert(NewsGatheringEvents).values(site_id=news_site_id, event='error_grubber', is_success=False)
-            )
-            print(cursor.inserted_primary_key[0])
-            session.execute(
-                insert(NewsGatheringMalfunctions).values(
-                    event_id=cursor.inserted_primary_key[0],
-                    malfunction_type=error_response.type,
-                    malfunction_details=error_response.type_detail,
-                    service_name=error_response.service_name,
-                    module_name=error_response.module_name,
-                    source=error_response.source,
-                    date=error_response.date,
-                    title=error_response.title,
-                    description=error_response.description,
-                    text_error=error_response.error_text,
-                    text_details=error_response.text_details,
-                    attribute_1=error_response.attribute_1,
-                    attribute_2=error_response.attribute_2,
-                    attribute_3=error_response.attribute_3,
-                    attribute_4=error_response.attribute_4,
-                    attribute_5=error_response.attribute_5
-                )
-            )
-
-            session.commit()
-        except Exception as error:
-            logger.error(error)
-            session.rollback()
-        finally:
-            session.close()
-
-
 def get_settings_value(property: str) -> str:
     with get_session() as session:
         value = session.execute(select(Settings.value).where(Settings.name == property)).scalar()
@@ -68,15 +34,20 @@ def get_settings_value(property: str) -> str:
 
 
 def get_min_time_delta() -> int:
-    return int(get_settings_value(property='number_of_days_to_view_sites'))
+    return int(get_settings_value(property='news_number_of_days_to_view_sites'))
 
 
 def get_format_post_params() -> FormatPostParamsConfig:
     return FormatPostParamsConfig(
-        formatting_min_len_title=int(get_settings_value(property='formatting_min_len_title')),
-        formatting_len_title=int(get_settings_value(property='formatting_len_title')),
-        formatting_min_len_details=int(get_settings_value(property='formatting_min_len_details')),
-        formatting_len_details=int(get_settings_value(property='formatting_len_details')),
+        formatting_min_len_title=int(get_settings_value(property='news_formatting_min_len_title')),
+        formatting_len_title=int(get_settings_value(property='news_formatting_len_title')),
+        formatting_min_len_details=int(get_settings_value(property='news_formatting_min_len_details')),
+        formatting_len_details=int(get_settings_value(property='news_formatting_len_details')),
+        main_tag_news=get_settings_value(property='news_main_tag'),
+        number_of_days_to_view_sites=int(get_settings_value(property='news_number_of_days_to_view_sites')),
+        number_days_search_post=int(get_settings_value(property='news_number_days_search_post')),
+        post_matcher_ratio=int(get_settings_value(property='news_post_matcher_ratio')),
+        len_loaded_content=int(get_settings_value(property='news_len_loaded_content'))
     )
 
 
@@ -89,11 +60,14 @@ def news_site_task(news_site: dict):
     news_site_field_tags = news_site.get('field_tags').split(',')
     news_site['parser_func'] = search_parser_function(news_site.get('parser_func'))
     browser_config = get_browser_chrome_config()
-    min_time_delta = datetime.datetime.now() - datetime.timedelta(days=get_min_time_delta())
-    max_time_delta = datetime.datetime.now() + datetime.timedelta(days=1)
 
     try:
+        min_time_delta = datetime.datetime.now() - datetime.timedelta(days=get_min_time_delta())
+        max_time_delta = datetime.datetime.now() + datetime.timedelta(days=1)
+        format_params: FormatPostParamsConfig = get_format_post_params()
+
         server_response: Union[SuccessResponse, MalfunctionResponse] = download(site=news_site,
+                                                                                format_params=format_params,
                                                                                 browser_config=browser_config)
         if server_response.status == Status.Ok:
             parser_response = parse(download_page_content=server_response.content,
@@ -108,14 +82,15 @@ def news_site_task(news_site: dict):
                             # Выполняем проверку по дате
                             if min_time_delta <= parser_data.date < max_time_delta:
                                 # Формируем пост
-                                format_params: FormatPostParamsConfig = get_format_post_params()
                                 post_editor_response = post_formation(parsed_data=parser_data,
                                                                       site=news_site,
                                                                       format_params=format_params)
-                                print(post_editor_response)
-                                # await add_post(post_editor=post_editor_response,
-                                #                site=site,
-                                #                grubber_config=grubber_config)
+                                add_post(post_editor=post_editor_response,
+                                         site=news_site,
+                                         news_site_id=news_site_id,
+                                         format_params=format_params,
+                                         vendor_tag=news_site_vendor,
+                                         field_tags=news_site_field_tags)
                             else:
                                 logger.debug(f'Date out of range, {news_site_name}, parsed_data: {parser_data}')
                         else:

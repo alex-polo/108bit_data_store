@@ -26,16 +26,6 @@ def task_scheduler():
                     'parser_func': news_site.parser.system_name,
                 }
             )
-            # list_news_entity.append(
-            #     NewsSiteEntity(
-            #         id=news_site.id,
-            #         name=news_site.name,
-            #         url=news_site.url,
-            #         vendor=news_site.vendor,
-            #         field_tags=news_site.field_tags.split(','),
-            #         parser_func=news_site.parser.system_name,
-            #     )
-            # )
 
     for news_site in list_news_entity:
         news_site_task.delay(news_site)

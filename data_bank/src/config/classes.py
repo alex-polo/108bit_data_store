@@ -79,3 +79,8 @@ class FormatPostParamsConfig:
     formatting_len_title: int
     formatting_min_len_details: int
     formatting_len_details: int
+    main_tag_news: str
+    number_of_days_to_view_sites: int
+    number_days_search_post: int
+    post_matcher_ratio: int
+    len_loaded_content: int

@@ -5,6 +5,7 @@ import traceback
 from celery import Celery
 from celery.schedules import crontab
 
+from .mics import get_news_site_processing_timeout
 from ..config import (get_celery_config,
                       CeleryConfig,
                       get_database_config,
@@ -43,7 +44,8 @@ def setup_periodic_tasks(sender, **kwargs):
             sender.conf.beat_schedule = {
                 'task_scheduler': {
                     'task': 'sheduler_news_task',
-                    'schedule': crontab(minute=f'*/{celery_config.SCHEDULER_TIME}'),
+                    # 'schedule': crontab(minute=f'*/{celery_config.SCHEDULER_TIME}'),
+                    'schedule': crontab(minute=f'*/{get_news_site_processing_timeout()}'),
                     'options': {
                         'routing_key': 'periodic_tasks',
                         'priority': 100
