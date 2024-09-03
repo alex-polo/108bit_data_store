@@ -1,11 +1,12 @@
 import logging
+from random import randrange
 
 import fastapi
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import User, NewsPosts, QueueOutputNewsPackage
+from src import User, NewsPosts, QueueOutputNewsPackage, Settings
 from src.auth.manager import current_active_user
 from src.database import get_async_session
 from src.schemes import NewsPost, UpdatePostRequest
@@ -50,11 +51,24 @@ async def get_news_post(session: AsyncSession = Depends(get_async_session),
 @news_bot_router.get("/update-status-news-post",
                      status_code=fastapi.status.HTTP_202_ACCEPTED,
                      response_model=None)
-async def get_news_post(data: UpdatePostRequest, session: AsyncSession = Depends(get_async_session),
-                        user: User = Depends(current_active_user)):
-
+async def update_status_news_post(id: int, session: AsyncSession = Depends(get_async_session),
+                                  user: User = Depends(current_active_user)):
     await session.execute(
         update(QueueOutputNewsPackage)
-        .where(QueueOutputNewsPackage.post_id == data.id).values(status='archive')
+        .where(QueueOutputNewsPackage.post_id == id).values(status='archive')
     )
     await session.commit()
+
+
+@news_bot_router.get("/get-send-time",
+                     status_code=fastapi.status.HTTP_200_OK,
+                     response_model=int)
+async def update_status_news_post(session: AsyncSession = Depends(get_async_session),
+                                  # user: User = Depends(current_active_user)
+                                  ):
+    settings = (
+            await session.execute(
+                select(Settings.value).where(Settings.name.in_(['news_bot_min_time', 'news_bot_max_time']))
+            )).scalars().all()
+
+    return randrange(start=int(settings[0]), stop=int(settings[1]))
