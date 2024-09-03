@@ -3,14 +3,15 @@ import logging
 import traceback
 from typing import Union
 
-from sqlalchemy import insert, CursorResult, Row
+from sqlalchemy import insert, CursorResult, Row, select
 
-from src import NewsGatheringEvents, NewsGatheringMalfunctions
+from src import NewsGatheringEvents, NewsGatheringMalfunctions, Settings
 from src.config import get_browser_chrome_config
 from src.database import get_session
 from src.parsers import list_parsers
 from src.tasks.celery import celery
 from src.tasks.parsing.loader import download
+from src.tasks.parsing.parsing import parse
 from src.utils.classes import SuccessResponse, MalfunctionResponse, Status
 
 logger = logging.getLogger()
@@ -26,29 +27,29 @@ def registry_grubber_error(news_site_id: int, error_response: MalfunctionRespons
     with get_session() as session:
         try:
             cursor: CursorResult = session.execute(
-                    insert(NewsGatheringEvents).values(site_id=news_site_id, event='error_grubber', is_success=False)
-                )
+                insert(NewsGatheringEvents).values(site_id=news_site_id, event='error_grubber', is_success=False)
+            )
             print(cursor.inserted_primary_key[0])
             session.execute(
-                    insert(NewsGatheringMalfunctions).values(
-                        event_id=cursor.inserted_primary_key[0],
-                        malfunction_type=error_response.type,
-                        malfunction_details=error_response.type_detail,
-                        service_name=error_response.service_name,
-                        module_name=error_response.module_name,
-                        source=error_response.source,
-                        date=error_response.date,
-                        title=error_response.title,
-                        description=error_response.description,
-                        text_error=error_response.error_text,
-                        text_details=error_response.text_details,
-                        attribute_1=error_response.attribute_1,
-                        attribute_2=error_response.attribute_2,
-                        attribute_3=error_response.attribute_3,
-                        attribute_4=error_response.attribute_4,
-                        attribute_5=error_response.attribute_5
-                    )
+                insert(NewsGatheringMalfunctions).values(
+                    event_id=cursor.inserted_primary_key[0],
+                    malfunction_type=error_response.type,
+                    malfunction_details=error_response.type_detail,
+                    service_name=error_response.service_name,
+                    module_name=error_response.module_name,
+                    source=error_response.source,
+                    date=error_response.date,
+                    title=error_response.title,
+                    description=error_response.description,
+                    text_error=error_response.error_text,
+                    text_details=error_response.text_details,
+                    attribute_1=error_response.attribute_1,
+                    attribute_2=error_response.attribute_2,
+                    attribute_3=error_response.attribute_3,
+                    attribute_4=error_response.attribute_4,
+                    attribute_5=error_response.attribute_5
                 )
+            )
 
             session.commit()
         except Exception as error:
@@ -56,6 +57,13 @@ def registry_grubber_error(news_site_id: int, error_response: MalfunctionRespons
             session.rollback()
         finally:
             session.close()
+
+
+def get_min_time_delta() -> int:
+    with get_session() as session:
+        value = int(session.execute(select(Settings).where(Settings.name == 'number_of_days_to_view_sites')).scalar())
+        session.close()
+    return value
 
 
 @celery.task(name='news_site_task')
@@ -68,8 +76,8 @@ def news_site_task(news_site: dict):
     news_site_parser_func = search_parser_function(news_site.get('parser_func'))
     browser_config = get_browser_chrome_config()
     # Берем из базы данных
-    # min_time_delta = datetime.datetime.now() - datetime.timedelta(days=grubber_config.number_of_days_to_view_sites)
-    # max_time_delta = datetime.datetime.now() + datetime.timedelta(days=1)
+    min_time_delta = datetime.datetime.now() - datetime.timedelta(days=get_min_time_delta())
+    max_time_delta = datetime.datetime.now() + datetime.timedelta(days=1)
 
     search_time = None
 
@@ -77,7 +85,10 @@ def news_site_task(news_site: dict):
         server_response: Union[SuccessResponse, MalfunctionResponse] = download(site=news_site,
                                                                                 browser_config=browser_config)
         if server_response.status == Status.Ok:
-            print('Успех')
+            parser_response = parse(download_page_content=server_response.content,
+                                    news_site=news_site,
+                                    search_time=min_time_delta,
+                                    browser_config=browser_config)
         else:
             registry_grubber_error(news_site_id=news_site_id, error_response=server_response)
 

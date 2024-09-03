@@ -15,10 +15,10 @@ from src.utils.classes import ParsedData, ParserField
 text_exception_class_style = 'Style classes not found in page html markup'
 
 
-async def wirenboard_parser(page_body: str,
+async def wirenboard_parser(site: dict,
+                            page_body: str,
                             search_time: datetime,
-                            browser_config: BrowserChromeConfig,
-                            site: dict) -> List[ParsedData]:
+                            browser_config: BrowserChromeConfig) -> List[ParsedData]:
     content_class_name = 'article-list__content'
     items_class_name = 'item'
     if content_class_name not in page_body or items_class_name not in page_body:
