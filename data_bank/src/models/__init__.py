@@ -9,3 +9,4 @@ from .news_posts import NewsPosts
 from .news_gathering_events import NewsGatheringEvents
 from .queue_output_news_package import QueueOutputNewsPackage
 from .news_gathering_malfunctions import NewsGatheringMalfunctions
+from .news_gathering_success import NewsGatheringSuccess

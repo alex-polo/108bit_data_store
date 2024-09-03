@@ -5,7 +5,7 @@ from typing import Union
 
 from sqlalchemy import select, insert, CursorResult
 
-from src import NewsPosts, NewsGatheringEvents, NewsGathering, QueueOutputNewsPackage
+from src import NewsPosts, NewsGatheringEvents, NewsGathering, QueueOutputNewsPackage, NewsGatheringSuccess
 from src.config import FormatPostParamsConfig
 from src.database import get_session
 from src.tasks.mics import registry_grubber_error
@@ -89,32 +89,8 @@ def save_post_database(news_site_id: int, grubber_post: PostData):
                 session.execute(
                     insert(QueueOutputNewsPackage).values(post_id=cursor_post.inserted_primary_key[0], status='send')
                 )
-                """
-    post_id: Mapped[int] = mapped_column(Integer, ForeignKey('news_posts.id', ondelete='CASCADE'), nullable=True)
-    status: Mapped[str] = mapped_column(String(25), nullable=False, unique=False)
-    
-    grubber_event_id
-    date
-    title
-    details
-    more
-    image_url
-    main_tag
-    field_tags
-    author
-    owner
-    created_on
-    queue_output_package = relationship(QueueOutputNewsPackage, passive_deletes=True)
-                """
 
                 session.commit()
-
-            # async with session.begin():
-            #     session.add(QueueOutputPackage(
-            #         post_id=post.id,
-            #         malfunctions_id=None,
-            #         status='send'
-            #     ))
     except:
         session.rollback()
         raise
@@ -156,8 +132,9 @@ def add_post(post_editor: Union[SuccessResponse, MalfunctionResponse],
             save_post_database(news_site_id=news_site_id, grubber_post=post)
 
             # Если в процессе формирования поста были недочеты вносим их в БД
-            for malfunction in post.malfunctions:
-                registry_grubber_error(news_site_id=news_site_id, error_response=malfunction)
+            # for malfunction in post.malfunctions:
+            #     print(malfunction)
+            #     registry_grubber_error(news_site_id=news_site_id, error_response=malfunction)
         else:
             logger.debug(f'The news is already in the database, parsed data: {post}')
     else:

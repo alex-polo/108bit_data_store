@@ -15,7 +15,7 @@ from src.config import (
     get_instructor_bot_user_config,
     get_storage_config,
     get_admin_user_config, BrowserChromeConfig, get_browser_chrome_config, get_server_config, ServerConfig)
-from src.routes import admin_panel_router
+from src.routes import admin_panel_router, news_bot_router
 
 logger = logging.getLogger(__name__)
 
@@ -80,3 +80,4 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(admin_panel_router)
+app.include_router(news_bot_router)
