@@ -4,3 +4,8 @@ from .parser import Parser
 from .news_gathering import NewsGathering
 from .crawl_events import CrawlEvent
 from .catalogs_gathering import CatalogsGathering
+from .settings import Settings
+from .news_posts import NewsPosts
+from .news_gathering_events import NewsGatheringEvents
+from .queue_output_news_package import QueueOutputNewsPackage
+from .news_gathering_malfunctions import NewsGatheringMalfunctions

@@ -1,5 +1,5 @@
 import enum
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Optional, Union, Any, List
 
@@ -29,7 +29,6 @@ class MalfunctionResponse(Response):
     module_name: str
     source: str
     title: str
-    image_path: str
     description: Optional[str] = None
     error_text: Optional[str] = None
     text_details: Optional[str] = None
@@ -56,3 +55,15 @@ class ParsedData:
     image_url: Optional[str]
     details: ParserField
     error_content = Optional[MalfunctionResponse]
+
+
+# @dataclass
+# class NewsSiteEntity:
+#     id: int
+#     name: str
+#     url: str
+#     vendor: str
+#     field_tags: str
+#     parser_func: Any
+#
+#     dict = asdict

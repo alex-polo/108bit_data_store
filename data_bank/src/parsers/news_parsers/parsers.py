@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import dateparser
 from bs4 import BeautifulSoup, element, Tag
 
+from src.config import BrowserChromeConfig
 from src.utils import download_page as download
 from src.utils.classes import ParsedData, ParserField
 
@@ -16,8 +17,8 @@ text_exception_class_style = 'Style classes not found in page html markup'
 
 async def wirenboard_parser(page_body: str,
                             search_time: datetime,
-                            site: dict,
-                            request_headers: dict) -> List[ParsedData]:
+                            browser_config: BrowserChromeConfig,
+                            site: dict) -> List[ParsedData]:
     content_class_name = 'article-list__content'
     items_class_name = 'item'
     if content_class_name not in page_body or items_class_name not in page_body:

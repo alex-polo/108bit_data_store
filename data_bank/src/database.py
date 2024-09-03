@@ -20,6 +20,10 @@ async_engine = create_async_engine(f'postgresql+asyncpg://{DATABASE_URL}')
 async_session_maker = sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
 
+def get_session() -> Session:
+    return session_maker()
+
+
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         yield session

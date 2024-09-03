@@ -42,11 +42,11 @@ def setup_periodic_tasks(sender, **kwargs):
         try:
             sender.conf.beat_schedule = {
                 'task_scheduler': {
-                    'task': 'task_scheduler',
+                    'task': 'sheduler_news_task',
                     'schedule': crontab(minute=f'*/{celery_config.SCHEDULER_TIME}'),
                     'options': {
                         'routing_key': 'periodic_tasks',
-                        'priority': 10
+                        'priority': 100
                     },
                 },
             }
