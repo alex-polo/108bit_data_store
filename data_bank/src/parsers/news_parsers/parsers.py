@@ -15,7 +15,7 @@ from src.utils.classes import ParsedData, ParserField
 text_exception_class_style = 'Style classes not found in page html markup'
 
 
-async def wirenboard_parser(site: dict,
+def wirenboard_parser(site: dict,
                             page_body: str,
                             search_time: datetime,
                             browser_config: BrowserChromeConfig) -> List[ParsedData]:

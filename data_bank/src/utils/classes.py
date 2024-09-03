@@ -57,13 +57,22 @@ class ParsedData:
     error_content = Optional[MalfunctionResponse]
 
 
-# @dataclass
-# class NewsSiteEntity:
-#     id: int
-#     name: str
-#     url: str
-#     vendor: str
-#     field_tags: str
-#     parser_func: Any
-#
-#     dict = asdict
+@dataclass
+class PostData(Response):
+    date: datetime
+    title: str
+    details: str
+    more: str
+    image_url: Optional[str]
+    main_tag: Optional[str]
+    fields_tags: Optional[str]
+    author: Optional[str]
+    malfunctions: Optional[List[MalfunctionResponse]]
+
+
+@dataclass
+class FormatField:
+    status: Status
+    field_name: str
+    field_value: str
+    warning_message: Optional[MalfunctionResponse]

@@ -11,4 +11,4 @@ class Settings(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
-    value: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    value: Mapped[Optional[str]] = mapped_column(String(255), unique=False)

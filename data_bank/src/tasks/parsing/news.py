@@ -1,18 +1,19 @@
 import datetime
 import logging
 import traceback
-from typing import Union
+from typing import Union, List
 
 from sqlalchemy import insert, CursorResult, Row, select
 
 from src import NewsGatheringEvents, NewsGatheringMalfunctions, Settings
-from src.config import get_browser_chrome_config
+from src.config import get_browser_chrome_config, FormatPostParamsConfig
 from src.database import get_session
 from src.parsers import list_parsers
 from src.tasks.celery import celery
 from src.tasks.parsing.loader import download
-from src.tasks.parsing.parsing import parse
-from src.utils.classes import SuccessResponse, MalfunctionResponse, Status
+from src.tasks.parsing.news_parsing import parse
+from src.tasks.parsing.news_post_editor import post_formation
+from src.utils.classes import SuccessResponse, MalfunctionResponse, Status, ParsedData
 
 logger = logging.getLogger()
 
@@ -59,11 +60,22 @@ def registry_grubber_error(news_site_id: int, error_response: MalfunctionRespons
             session.close()
 
 
-def get_min_time_delta() -> int:
+def get_settings_value(property: str) -> str:
     with get_session() as session:
-        value = int(session.execute(select(Settings).where(Settings.name == 'number_of_days_to_view_sites')).scalar())
+        value = session.execute(select(Settings.value).where(Settings.name == property)).scalar()
         session.close()
     return value
+
+def get_min_time_delta() -> int:
+    return int(get_settings_value(property='number_of_days_to_view_sites'))
+
+def get_format_post_params() -> FormatPostParamsConfig:
+    return FormatPostParamsConfig(
+        formatting_min_len_title=int(get_settings_value(property='formatting_min_len_title')),
+        formatting_len_title=int(get_settings_value(property='formatting_len_title')),
+        formatting_min_len_details=int(get_settings_value(property='formatting_min_len_details')),
+        formatting_len_details=int(get_settings_value(property='formatting_len_details')),
+    )
 
 
 @celery.task(name='news_site_task')
@@ -73,13 +85,10 @@ def news_site_task(news_site: dict):
     news_site_url = news_site.get('url')
     news_site_vendor = news_site.get('vendor')
     news_site_field_tags = news_site.get('field_tags').split(',')
-    news_site_parser_func = search_parser_function(news_site.get('parser_func'))
+    news_site['parser_func'] = search_parser_function(news_site.get('parser_func'))
     browser_config = get_browser_chrome_config()
-    # Берем из базы данных
     min_time_delta = datetime.datetime.now() - datetime.timedelta(days=get_min_time_delta())
     max_time_delta = datetime.datetime.now() + datetime.timedelta(days=1)
-
-    search_time = None
 
     try:
         server_response: Union[SuccessResponse, MalfunctionResponse] = download(site=news_site,
@@ -89,8 +98,31 @@ def news_site_task(news_site: dict):
                                     news_site=news_site,
                                     search_time=min_time_delta,
                                     browser_config=browser_config)
+            for parser_response_item in parser_response:
+                if parser_response_item.status == Status.Ok:
+                    parser_data_list: List[ParsedData] = parser_response_item.content
+                    for parser_data in parser_data_list:
+                        if parser_data.is_valid:
+                            # Выполняем проверку по дате
+                            if min_time_delta <= parser_data.date < max_time_delta:
+                                # Формируем пост
+                                format_params: FormatPostParamsConfig = get_format_post_params()
+                                post_editor_response = post_formation(parsed_data=parser_data,
+                                                                      site=news_site,
+                                                                      format_params=format_params)
+                                print(post_editor_response)
+                                # await add_post(post_editor=post_editor_response,
+                                #                site=site,
+                                #                grubber_config=grubber_config)
+                            else:
+                                logger.debug(f'Date out of range, {news_site_name}, parsed_data: {parser_data}')
+                        else:
+                            registry_grubber_error(news_site_id=news_site_id, error_response=parser_data.error_content)
+                else:
+                    registry_grubber_error(news_site_id=news_site_id, error_response=parser_response_item)
         else:
             registry_grubber_error(news_site_id=news_site_id, error_response=server_response)
+
 
     except Exception as error:
         text_error = 'News site task непредвиденная ошибка ' + str(error)

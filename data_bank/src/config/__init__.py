@@ -7,7 +7,8 @@ from .classes import (
     AuthConfig,
     BrowserChromeConfig,
     ServerConfig,
-    CeleryConfig)
+    CeleryConfig,
+    FormatPostParamsConfig)
 
 from .methods import (
     get_database_config,

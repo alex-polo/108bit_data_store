@@ -71,3 +71,11 @@ class BrowserChromeConfig:
 class ServerConfig:
     version: str
     https: bool
+
+
+@dataclass
+class FormatPostParamsConfig:
+    formatting_min_len_title: int
+    formatting_len_title: int
+    formatting_min_len_details: int
+    formatting_len_details: int

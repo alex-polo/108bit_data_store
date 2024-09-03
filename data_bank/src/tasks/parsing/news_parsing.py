@@ -21,7 +21,7 @@ def parsing_error_response(site: dict, description: Optional[str], error_text: O
                                type_detail='parsing_error',
                                service_name='grubber_service',
                                module_name='parsing',
-                               source=site.get("site_name"),
+                               source=site.get("name"),
                                title='Ошибка при парсинге',
                                description=description,
                                error_text=error_text,
@@ -92,8 +92,9 @@ def parse(download_page_content: str,
     """
     parser_response_list = list()
     try:
-        logger.debug(f'Parsing site: {news_site.get("site_name")}, url: {news_site.get("url")}')
+        logger.debug(f'Parsing site: {news_site.get("name")}, url: {news_site.get("url")}')
         parser = news_site.get('parser_func')
+        print(f'parser: {parser}')
 
         parser_response: List[ParsedData] = parser(site=news_site,
                                                    page_body=download_page_content,
@@ -113,7 +114,7 @@ def parse(download_page_content: str,
                             # return SuccessResponse(status=Status.Ok, content=parser_response)
                         else:
                             logger.error(f'A date with an invalid value was received from the parser.'
-                                         f'\nresource: {news_site.get("site_name")}, '
+                                         f'\nresource: {news_site.get("name")}, '
                                          f'\nLink to post: {news_site.get("url")}'
                                          f'\nValue date: {parsed_data.date}')
 
@@ -121,7 +122,7 @@ def parse(download_page_content: str,
                             parsed_data.error_content = parsing_error_response(
                                 site=news_site,
                                 description=f'От парсера получена дата с неверным значением.'
-                                            f'\nресурс: {news_site.get("site_name")}, '
+                                            f'\nресурс: {news_site.get("name")}, '
                                             f'\nCсылка на пост: {news_site.get("url")}'
                                             f'\nЗначение date: {parsed_data.date}',
                                 error_text=None,
@@ -129,7 +130,7 @@ def parse(download_page_content: str,
                                 url=parsed_data.more)
                     else:
                         logger.error(f'Title received from parser with value None or received a non-string value.'
-                                     f'\nresource: {news_site.get("site_name")}, '
+                                     f'\nresource: {news_site.get("name")}, '
                                      f'\nLink to post: {news_site.get("url")}'
                                      f'\nTitle value: {parsed_data.title}')
 
@@ -138,7 +139,7 @@ def parse(download_page_content: str,
                             site=news_site,
                             description=f'От парсера получен title со значением None или получено '
                                         f'значение не являющееся строкой.'
-                                        f'\nРесурс: {news_site.get("site_name")}, '
+                                        f'\nРесурс: {news_site.get("name")}, '
                                         f'\nCсылка на пост: {news_site.get("url")}'
                                         f'\nЗначение title: {parsed_data.title}',
                             error_text=None,
@@ -147,26 +148,26 @@ def parse(download_page_content: str,
 
                 else:
                     logger.error(f'Invalid post link received from parser.'
-                                 f'\nResource: {news_site.get("site_name")}, '
+                                 f'\nResource: {news_site.get("name")}, '
                                  f'\nLink to post: {parsed_data.more}')
 
                     parsed_data.is_valid = False
                     parsed_data.error_content = parsing_error_response(
                         site=news_site,
                         description=f'От парсера получена невалидная ссылка на пост.'
-                                    f'\nРесурс: {news_site.get("site_name")}, '
+                                    f'\nРесурс: {news_site.get("name")}, '
                                     f'\nCсылка на пост: {parsed_data.more}',
                         error_text=None,
                         text_details=None,
                         url=None)
         else:
             error_message = (f'No data received from parser function while parsing the site: '
-                             f'{news_site.get("site_name")}, parser function: {news_site.get("parser_func")}')
+                             f'{news_site.get("name")}, parser function: {news_site.get("parser_func")}')
             logger.warning(error_message)
 
             # parser_response_list.append(
             #     parsing_error_response(site=site,
-            #                            description=f'Ресурс: {site.get("site_name")}, '
+            #                            description=f'Ресурс: {site.get("name")}, '
             #                                        f'\nСодержание ошибки: От функции парсера не получено данных',
             #                            error_text="От функции парсера не получено данных",
             #                            text_details=error_message,
@@ -174,12 +175,12 @@ def parse(download_page_content: str,
             #                            url=site.get("url")))
 
     except Exception as error:
-        logger.error(f'An error occurred while parsing the site: {news_site.get("site_name")}')
+        logger.error(f'An error occurred while parsing the site: {news_site.get("name")}')
         traceback_text = traceback.format_exc(limit=None, chain=True)
         logger.error(traceback_text)
 
         parser_response_list.append(parsing_error_response(site=news_site,
-                                                           description=f'Ресурс: {news_site.get("site_name")}, '
+                                                           description=f'Ресурс: {news_site.get("name")}, '
                                                                        f'\nСодержание ошибки: {str(error)}'
                                                                        f'\nПодробнее в логе.',
                                                            error_text=str(error),
