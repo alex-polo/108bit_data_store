@@ -67,13 +67,17 @@ export const AuthProvider = ({ children }: Props) => {
 
   const getUserProfile = async (): Promise<IUserProfile> => {
     try {
-      const userProfileFormAPI: IUserProfile = (await getUserProfileAPI()).data;
+      const response = await getUserProfileAPI();
+      if (response.status != 200) throw new Error('Failed request');
+
+      const userProfileFormAPI: IUserProfile = response.data;
       return userProfileFormAPI;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status == 401) {
-          unauthorized();
-        }
+        // if (error.response?.status == 401) {
+        //   unauthorized();
+        // }
+        unauthorized();
       }
       console.log(error);
       throw new Error('Failed get user profile from server');

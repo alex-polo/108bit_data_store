@@ -64,8 +64,7 @@ async def update_status_news_post(id: int, session: AsyncSession = Depends(get_a
                      status_code=fastapi.status.HTTP_200_OK,
                      response_model=int)
 async def update_status_news_post(session: AsyncSession = Depends(get_async_session),
-                                  # user: User = Depends(current_active_user)
-                                  ):
+                                  user: User = Depends(current_active_user)):
     settings = (
             await session.execute(
                 select(Settings.value).where(Settings.name.in_(['news_bot_min_time', 'news_bot_max_time']))

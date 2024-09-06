@@ -5,7 +5,7 @@ from sqlalchemy import Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .parser import Parser
+from .schemes_parser import Parser
 from .news_gathering_events import NewsGatheringEvents
 
 

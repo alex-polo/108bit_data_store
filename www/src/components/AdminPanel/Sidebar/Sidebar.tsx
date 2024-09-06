@@ -18,7 +18,9 @@ export const Sidebar = () => {
             <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.metrics}>
               Метрики
             </NavLink>
-
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.metrics}>
+              Интернет сайты
+            </NavLink>
             <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.parsers}>
               Схемы парсеров
             </NavLink>
@@ -27,6 +29,9 @@ export const Sidebar = () => {
             </NavLink>
             <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.catalogsGathering}>
               Каталог
+            </NavLink>
+            <NavLink className="sidebar_link" to={ApplicationRouting.USER_PROFILE_ROUTE.catalogsGathering}>
+              Просмотр очереди
             </NavLink>
             {/* <NavLink className="btn btn-primary btn-sm" to={ApplicationRouting.USER_PROFILE.createObject}>
               + Новый объект
