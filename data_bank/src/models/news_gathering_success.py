@@ -14,5 +14,3 @@ class NewsGatheringSuccess(Base):
     event: Mapped[Text] = mapped_column(Text(), nullable=False, unique=False)
     details: Mapped[Text] = mapped_column(Text(), nullable=False, unique=False)
     created_on: Mapped[DateTime] = mapped_column(DateTime(), default=datetime.now)
-
-    # queue_output_news_package = relationship(QueueOutputNewsPackage, passive_deletes=True)

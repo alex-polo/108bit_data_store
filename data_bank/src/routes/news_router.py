@@ -4,12 +4,13 @@ from random import randrange
 import fastapi
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, update
+from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import User, NewsPosts, QueueOutputNewsPackage, Settings
+from src.models import User, NewsPosts, QueueOutputNewsPackage, Settings, TgUser
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import NewsPost, UpdatePostRequest
+from src.schemes import NewsPost
 
 logger = logging.getLogger(__name__)
 
@@ -71,3 +72,31 @@ async def update_status_news_post(session: AsyncSession = Depends(get_async_sess
             )).scalars().all()
 
     return randrange(start=int(settings[0]), stop=int(settings[1]))
+
+
+
+@news_bot_router.get("/update-status-news-post",
+                     status_code=fastapi.status.HTTP_202_ACCEPTED,
+                     response_model=None)
+async def update_status_news_post(id: int, session: AsyncSession = Depends(get_async_session),
+                                  user: User = Depends(current_active_user)):
+    await session.execute(
+        update(QueueOutputNewsPackage)
+        .where(QueueOutputNewsPackage.post_id == id).values(status='archive')
+    )
+    await session.commit()
+
+
+@news_bot_router.post("/update-news-bot-telegram-users",
+                     status_code=fastapi.status.HTTP_202_ACCEPTED)
+async def update_news_bot_telegram_users(tg_identifier: int,
+                           session: AsyncSession = Depends(get_async_session),
+                                  user: User = Depends(current_active_user)):
+    tg_user = (await session.execute(select(TgUser).where(TgUser.tg_id == tg_identifier))).scalar()
+    with session.begin():
+        if tg_user is None:
+            await session.execute(
+                insert(TgUser).values()
+            )
+
+

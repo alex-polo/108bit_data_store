@@ -20,10 +20,6 @@ class ChangeParserQuery(BaseModel):
     is_enable: str
 
 
-# class GetParserQuery(BaseModel):
-#     parser_system_name: str
-
-
 class NewsGatheringResponse(BaseModel):
     id: int
     name: Optional[str]

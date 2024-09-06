@@ -10,7 +10,6 @@ import { DashboardContentLayout } from './layouts/DashboardContentLayout';
 import { HomePage, LoginPage, NotFoundPage } from './components/pages';
 import { BreadcrumbPage, MetricsPage, ParsersPage, EditParserPage } from './components/AdminPanel';
 
-import './App.css';
 import { NewsGatheringPage } from './components/AdminPanel/ContentPage';
 import { AddNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering/AddNewsEntity';
 import { EditNewsEntity } from './components/AdminPanel/ContentPage/NewsGathering';
@@ -19,6 +18,8 @@ import {
   CreateCatalogsEntity,
   EditCatalogsEntity,
 } from './components/AdminPanel/ContentPage/CatalogsGathering';
+
+import './App.css';
 
 const router = createBrowserRouter(
   createRoutesFromElements(

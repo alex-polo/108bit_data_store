@@ -6,11 +6,23 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, update, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import User, Parser, NewsGathering, CatalogsGathering
 from src.auth.manager import current_active_user
 from src.database import get_async_session
-from src.schemes import ParsersResponse, ChangeParserQuery, NewsGatheringResponse, NewsGatheringQuery, \
-    NewsGatheringById, CatalogGatheringEntity, CatalogGatheringById
+from src.models import (
+    User,
+    Parser,
+    NewsGathering,
+    CatalogsGathering)
+
+from src.schemes import (
+    ParsersResponse,
+    ChangeParserQuery,
+    NewsGatheringResponse,
+    NewsGatheringQuery,
+    NewsGatheringById,
+    CatalogGatheringEntity,
+    CatalogGatheringById
+)
 
 logger = logging.getLogger(__name__)
 

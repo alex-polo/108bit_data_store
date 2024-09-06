@@ -1,7 +1,12 @@
-from .news_bot import NewsPost, UpdatePostRequest
+from .news_bot import (NewsPost,
+                       UpdatePostRequest,
+                       TgUser)
 from .admin_panel import (
     ParsersResponse,
     ChangeParserQuery,
-    NewsGatheringResponse
+    NewsGatheringResponse,
+    NewsGatheringById,
+    CatalogGatheringEntity,
+    CatalogGatheringById,
+    NewsGatheringQuery
 )
-from .admin_panel import *
