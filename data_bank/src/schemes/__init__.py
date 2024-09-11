@@ -1,6 +1,10 @@
-from .news_bot import (NewsPost,
-                       UpdatePostRequest,
-                       TgUser)
+from .news_bot import (
+    NewsPostScheme,
+    UpdatePostScheme,
+    TgUserScheme,
+    DispatchTimeScheme
+)
+
 from .admin_panel import (
     ParsersResponse,
     ChangeParserQuery,

@@ -8,11 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.manager import current_active_user
 from src.database import get_async_session
+
 from src.models import (
     User,
     Parser,
     NewsGathering,
-    CatalogsGathering)
+    CatalogGathering)
 
 from src.schemes import (
     ParsersResponse,
@@ -248,7 +249,7 @@ async def get_all_catalogs_gathering(session: AsyncSession = Depends(get_async_s
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
     list_catalogs_entity: List[CatalogGatheringEntity] = list()
-    for row in (await session.execute(select(CatalogsGathering))).scalars().all():
+    for row in (await session.execute(select(CatalogGathering))).scalars().all():
         list_catalogs_entity.append(CatalogGatheringEntity(
             id=row.id,
             name=row.name,
@@ -268,7 +269,7 @@ async def create_catalog_gathering(data: CatalogGatheringEntity, session: AsyncS
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    await session.execute(insert(CatalogsGathering).values(name=data.name,
+    await session.execute(insert(CatalogGathering).values(name=data.name,
                                                            url=data.url,
                                                            description=data.description,
                                                            parser_id=data.parser_id,
@@ -285,8 +286,8 @@ async def edit_catalog_gathering(data: CatalogGatheringEntity, session: AsyncSes
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    await session.execute(update(CatalogsGathering)
-                          .where(CatalogsGathering.id == data.id)
+    await session.execute(update(CatalogGathering)
+                          .where(CatalogGathering.id == data.id)
                           .values(name=data.name,
                                   url=data.url,
                                   description=data.description,
@@ -305,7 +306,7 @@ async def get_catalog_gathering_by_name(name: str,
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    catalog_entity = (await session.execute(select(CatalogsGathering).where(CatalogsGathering.name == name))).scalar()
+    catalog_entity = (await session.execute(select(CatalogGathering).where(CatalogGathering.name == name))).scalar()
     return CatalogGatheringEntity(
         id=catalog_entity.id,
         name=catalog_entity.name,
@@ -324,5 +325,5 @@ async def delete_catalog_gathering_by_id(data: CatalogGatheringById,
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    await session.execute(delete(CatalogsGathering).where(CatalogsGathering.id == data.id))
+    await session.execute(delete(CatalogGathering).where(CatalogGathering.id == data.id))
     await session.commit()

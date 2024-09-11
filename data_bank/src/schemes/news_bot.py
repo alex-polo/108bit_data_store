@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class NewsPost(BaseModel):
+class NewsPostScheme(BaseModel):
     id: int
     date: int
     title: str
@@ -15,12 +15,14 @@ class NewsPost(BaseModel):
     vendor: str
 
 
-class UpdatePostRequest(BaseModel):
-    id: int
+class UpdatePostScheme(BaseModel):
+    post_id: int
 
-class TgUser(BaseModel):
-    id: int
-    tg_id: int
+class DispatchTimeScheme(BaseModel):
+    time: int
+
+class TgUserScheme(BaseModel):
+    tg_identifier: int
     first_name: Optional[str]
     second_name: Optional[str]
     surname: Optional[str]

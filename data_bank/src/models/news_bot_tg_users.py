@@ -11,7 +11,7 @@ class TgUser(Base):
     __tablename__ = "tg_users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    tg_id: Mapped[int] = mapped_column(Integer, nullable=True, unique=True)
+    tg_identifier: Mapped[int] = mapped_column(Integer, nullable=True, unique=True)
     tg_bot: Mapped[Optional[str]] = mapped_column(String(150), unique=False)
     first_name: Mapped[Optional[str]] = mapped_column(String(50), unique=False)
     second_name: Mapped[Optional[str]] = mapped_column(String(50), unique=False)

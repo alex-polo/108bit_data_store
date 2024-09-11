@@ -1,5 +1,5 @@
 
-from typing import Optional, List
+from typing import Optional
 
 from sqlalchemy import Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,6 +20,6 @@ class NewsGathering(Base):
     field_tags: Mapped[Optional[str]] = mapped_column(String(1024), unique=False)
     is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
     parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
-    parser: Mapped["Parser"] = relationship()
-
+    internet_site: Mapped['InternetSite'] = relationship(back_populates="news_gathering")
     grubber_events = relationship(NewsGatheringEvents, passive_deletes=True)
+    parser: Mapped["Parser"] = relationship()

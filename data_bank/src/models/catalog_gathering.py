@@ -8,8 +8,8 @@ from .base import Base
 from .schemes_parser import Parser
 
 
-class CatalogsGathering(Base):
-    __tablename__ = "catalog_parsing"
+class CatalogGathering(Base):
+    __tablename__ = "catalog_gathering"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[Optional[str]] = mapped_column(String(255), nullable=False, unique=False)
@@ -17,5 +17,5 @@ class CatalogsGathering(Base):
     description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
     is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
     parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
-
+    internet_site: Mapped['InternetSite'] = relationship(back_populates="catalog_gathering")
     parser: Mapped["Parser"] = relationship()
