@@ -7,7 +7,7 @@ from .base import Base
 
 
 class Parser(Base):
-    __tablename__ = "parsers"
+    __tablename__ = "schemes_parsers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     system_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
@@ -16,9 +16,3 @@ class Parser(Base):
     parser_type: Mapped[Optional[str]] = mapped_column(String(150), unique=False)
     is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
     is_parser_scheme_missing: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
-
-
-    # class Child(Base):
-    #     __tablename__ = "child_table"
-    #
-    #     id: Mapped[int] = mapped_column(primary_key=True)

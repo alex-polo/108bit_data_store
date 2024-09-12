@@ -12,4 +12,4 @@ from .news_gathering_success import NewsGatheringSuccess
 from .internet_site import InternetSite
 from .catalog_product import CatalogsProduct
 from .catalog_category import CatalogsCategory
-from .news_bot_tg_users import TgUser
+from .telegram_users import TelegramUser

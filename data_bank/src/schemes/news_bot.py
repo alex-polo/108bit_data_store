@@ -23,10 +23,9 @@ class DispatchTimeScheme(BaseModel):
 
 class TgUserScheme(BaseModel):
     tg_identifier: int
-    first_name: Optional[str]
-    second_name: Optional[str]
-    surname: Optional[str]
-    phone_number_tg: Optional[str]
-    is_active: Optional[bool]
+    is_bot: bool
+    first_name: str
+    last_name: Optional[str]
+    username: Optional[str]
 
 

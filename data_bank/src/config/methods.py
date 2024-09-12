@@ -15,16 +15,70 @@ from .classes import (
     AuthConfig,
     BrowserChromeConfig,
     ServerConfig,
-    CeleryConfig)
+    CeleryConfig
+)
 
-from .settings import (win_webdriver_path,
-                       linux_webdriver_path,
-                       webdriver_port,
-                       webdriver_timeout,
-                       chrome_page_load_strategy,
-                       chrome_options, celery_logging_config, scheduler_time)
+from .settings import (
+    win_webdriver_path,
+    linux_webdriver_path,
+    webdriver_port,
+    webdriver_timeout,
+    chrome_page_load_strategy,
+    chrome_options,
+    celery_logging_config,
+    scheduler_time,
+    # system_news_parser_type,
+    # system_catalog_parser_type,
+    # queue_posts_status_send,
+    # queue_posts_status_archive,
+    # system_name_news_bot,
+    # system_name_instruktor_bot,
+    # news_bot_dispatch_max_time,
+    # news_bot_dispatch_min_time
+)
 
 logger = logging.getLogger(__name__)
+
+
+# def get_system_name_news_bot() -> str:
+#     return system_name_news_bot
+#
+# def get_system_name_instruktor_bot() -> str:
+#     return system_name_instruktor_bot
+#
+# def get_news_bot_dispatch_min_time() -> str:
+#     return news_bot_dispatch_min_time
+#
+# def get_news_bot_dispatch_max_time() -> str:
+#     return news_bot_dispatch_max_time
+#
+# def get_system_news_parser_type() -> str:
+#     return system_news_parser_type
+#
+# def get_system_catalog_parser_type() -> str:
+#     return system_catalog_parser_type
+#
+# def get_queue_posts_status_send() -> str:
+#     return queue_posts_status_send
+#
+# def get_queue_posts_status_archive() -> str:
+#     return queue_posts_status_archive
+
+
+"""
+('news_formatting_min_len_title', '0'),
+								   		    ('news_formatting_len_title', '100'),
+								   		    ('news_formatting_min_len_details', '0'),
+								   		    ('news_formatting_len_details', '250'),
+											('news_main_tag', '#Новости'),
+											('news_site_processing_timeout', '1'),
+											('news_number_of_days_to_view_sites', '1200'),
+											('news_number_days_search_post', '1200'),
+											('news_post_matcher_ratio', '1000'),
+											('news_len_loaded_content', '1000'),
+											('news_bot_dispatch_min_time', '1'),
+											('news_bot_dispatch_max_time', '2');
+"""
 
 
 def get_database_config() -> DatabaseConfig:
@@ -145,3 +199,4 @@ def get_celery_config() -> CeleryConfig:
         BACKEND=env.str('CELERY_BACKEND'),
         SCHEDULER_TIME=scheduler_time
     )
+
