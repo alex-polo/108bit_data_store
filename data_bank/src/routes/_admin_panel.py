@@ -11,7 +11,7 @@ from src.database import get_async_session
 
 from src.models import (
     User,
-    Parser,
+    SchemeParser,
     NewsGathering,
     CatalogGathering)
 
@@ -27,10 +27,10 @@ from src.schemes import (
 
 logger = logging.getLogger(__name__)
 
-admin_panel_router = APIRouter(
-    prefix='/admin-panel',
-    tags=["admin-panel"],
-)
+# admin_panel_router = APIRouter(
+#     prefix='/admin-panel',
+#     tags=["admin-panel"],
+# )
 
 
 @admin_panel_router.get("/get-news-parsers",
@@ -41,12 +41,10 @@ async def get_news_parsers(session: AsyncSession = Depends(get_async_session),
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    # return [ParsersResponse.model_validate(row, from_attributes=True)
-    #         for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser')))
-    #         .scalars().all()]
-
     list_parsers: List[ParsersResponse] = list()
-    for row in (await session.execute(select(Parser).where(Parser.parser_type == 'news_parser'))).scalars().all():
+    for row in (await session.execute(
+            select(SchemeParser).where(SchemeParser.parser_type == 'news_parser')
+    )).scalars().all():
         list_parsers.append(ParsersResponse(
             id=row.id,
             system_name=row.system_name,
@@ -69,7 +67,9 @@ async def get_catalog_parsers(session: AsyncSession = Depends(get_async_session)
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
     list_parsers: List[ParsersResponse] = list()
-    for row in (await session.execute(select(Parser).where(Parser.parser_type == 'catalog_parser'))).scalars().all():
+    for row in (await session.execute(
+            select(SchemeParser).where(SchemeParser.parser_type == 'catalog_parser')
+                                      )).scalars().all():
         list_parsers.append(ParsersResponse(
             id=row.id,
             system_name=row.system_name,
@@ -93,8 +93,8 @@ async def get_active_news_parsers(session: AsyncSession = Depends(get_async_sess
 
     list_parsers: List[ParsersResponse] = list()
     for row in (await session.execute(
-            select(Parser).where(Parser.is_enable == True).where(
-                Parser.is_parser_scheme_missing == False).where(Parser.parser_type == 'news_parser'))).scalars().all():
+            select(SchemeParser).where(SchemeParser.is_enable == True).where(
+                SchemeParser.is_parser_scheme_missing == False).where(SchemeParser.parser_type == 'news_parser'))).scalars().all():
         list_parsers.append(ParsersResponse(
             id=row.id,
             system_name=row.system_name,
@@ -117,7 +117,7 @@ async def get_parser(parser_system_name: str,
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
-    parser = (await session.execute(select(Parser).where(Parser.system_name == parser_system_name))).scalar()
+    parser = (await session.execute(select(SchemeParser).where(SchemeParser.system_name == parser_system_name))).scalar()
     return ParsersResponse(
         id=parser.id,
         system_name=parser.system_name,
@@ -137,7 +137,7 @@ async def save_change_parser(value: ChangeParserQuery,
     if user.is_superuser is False:
         raise HTTPException(status_code=fastapi.status.HTTP_403_FORBIDDEN, detail="User is not superuser")
 
-    await session.execute(update(Parser).where(Parser.system_name == value.system_name)
+    await session.execute(update(SchemeParser).where(SchemeParser.system_name == value.system_name)
                           .values(parser_name=value.parser_name,
                                   description=value.description,
                                   is_enable=True if value.is_enable == 'Да' else False))

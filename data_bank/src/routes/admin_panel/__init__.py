@@ -1,0 +1,1 @@
+from .panel_routes import admin_panel_router

@@ -57,3 +57,11 @@ class CatalogGatheringEntity(BaseModel):
     description: Optional[str]
     parser_id: Optional[int]
     is_enable: str
+
+
+class InternetSiteDTO(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    news_gathering_id: Optional[int]
+    catalog_gathering_id: Optional[int]

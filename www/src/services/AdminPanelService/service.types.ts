@@ -34,3 +34,11 @@ export interface ICatalogEntityData {
   is_enable: string;
   parser_id: number;
 }
+
+export interface IInternetSiteDTO {
+  id: number;
+  name: string;
+  description: string;
+  news_gathering_id: number;
+  catalog_gathering_id: number;
+}

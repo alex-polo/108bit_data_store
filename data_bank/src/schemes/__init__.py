@@ -12,5 +12,6 @@ from .admin_panel import (
     NewsGatheringById,
     CatalogGatheringEntity,
     CatalogGatheringById,
-    NewsGatheringQuery
+    NewsGatheringQuery,
+    InternetSiteDTO
 )

@@ -5,7 +5,8 @@ from sqlalchemy import Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .schemes_parser import Parser
+from .schemes_parser import SchemeParser
+from .internet_site import InternetSite
 
 
 class CatalogGathering(Base):
@@ -16,6 +17,6 @@ class CatalogGathering(Base):
     url: Mapped[Optional[str]] = mapped_column(String(300), nullable=False, unique=False)
     description: Mapped[Optional[str]] = mapped_column(String(255), unique=False)
     is_enable: Mapped[bool] = mapped_column(Boolean, nullable=False, unique=False, default=False)
-    parser_id: Mapped[int] = mapped_column(ForeignKey(Parser.id), nullable=True, unique=False)
-    internet_site: Mapped['InternetSite'] = relationship(back_populates="catalog_gathering")
-    parser: Mapped["Parser"] = relationship()
+    parser_id: Mapped[int] = mapped_column(ForeignKey(SchemeParser.id), nullable=True, unique=False)
+    internet_site: Mapped[InternetSite] = relationship(back_populates="catalog_gathering")
+    parser: Mapped[SchemeParser] = relationship()

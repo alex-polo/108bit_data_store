@@ -1,6 +1,6 @@
 from .base import Base
 from .user import User
-from .schemes_parser import Parser
+from .schemes_parser import SchemeParser
 from .news_gathering import NewsGathering
 from .catalog_gathering import CatalogGathering
 from .settings import Settings
